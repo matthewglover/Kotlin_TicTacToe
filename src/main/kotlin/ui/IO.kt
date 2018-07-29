@@ -2,6 +2,6 @@ package ui
 
 interface IO {
   fun clearScreen()
-  fun read(): String?
+  fun readLine(): String?
   fun write(t: String)
 }

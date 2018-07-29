@@ -9,8 +9,8 @@ class MockIO : IO {
     funCalls.add("clearScreen")
   }
 
-  override fun read(): String? {
-    funCalls.add("read")
+  override fun readLine(): String? {
+    funCalls.add("readLine")
     return toRead.removeAt(0)
   }
 

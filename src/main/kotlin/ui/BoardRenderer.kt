@@ -1,31 +1,32 @@
 package ui
 
-import game.BlankTile
+import game.FreeTile
 import game.Board
 import game.Move
 import util.intersperse
 
-object BoardRenderer {
-  private const val ROW_DIVIDER = "-----------"
+private const val ROW_DIVIDER = "-----------"
 
-  fun render(board: Board) =
-      renderRows(board)
-          .intersperse(ROW_DIVIDER)
-          .joinToString("\n")
+class BoardRenderer(private val board: Board) {
 
-  private fun renderRows(board: Board) =
-      renderTiles(board)
-          .chunked(3)
-          .map { " ${it.joinToString(" | ")}" }
+  val rendered by lazy {
+    renderedRows
+        .intersperse(ROW_DIVIDER)
+        .joinToString("\n")
+  }
 
-  private fun renderTiles(board: Board) =
-      (1..9).map { renderTile(board, it) }
+  private val renderedRows by lazy {
+    renderedTiles
+        .chunked(3)
+        .map { " ${it.joinToString(" | ")}" }
+  }
 
-  private fun renderTile(board: Board, number: Int) =
-      with(board.tile(number)) {
-        when (this) {
-          is BlankTile -> this.number.toString()
-          is Move -> this.mark.toString()
-        }
-      }
+  private val renderedTiles by lazy { (1..9).map(::renderTile) }
+
+  private fun renderTile(tileNumber: Int) = with(board.tile(tileNumber)) {
+    when (this) {
+      is FreeTile -> this.number.toString()
+      is Move -> this.mark.toString()
+    }
+  }
 }

@@ -9,15 +9,9 @@ import game.Move
 class MoveParser(private val board: Board, private val mark: Mark) {
   fun parse(input: String?): Either<InvalidInput, Move> =
       parseToString(input)
-          .flatMap { parseToInt(it) }
-          .flatMap { validate(it) }
+          .flatMap(::parseToInt)
+          .flatMap(::validate)
           .map { Move(it, mark) }
-
-  private fun parseToString(input: String?) =
-      if (input == null)
-        Either.Left(InvalidInput.NON_INTEGER)
-      else
-        Either.Right(input)
 
   private fun parseToInt(input: String) =
       try {
@@ -25,6 +19,12 @@ class MoveParser(private val board: Board, private val mark: Mark) {
       } catch (e: NumberFormatException) {
         Either.Left(InvalidInput.NON_INTEGER)
       }
+
+  private fun parseToString(input: String?) =
+      if (input == null)
+        Either.Left(InvalidInput.NON_INTEGER)
+      else
+        Either.Right(input)
 
   private fun validate(tileNumber: Int) =
       if (board.isTileFree(tileNumber))
