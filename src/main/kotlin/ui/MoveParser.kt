@@ -27,8 +27,10 @@ class MoveParser(private val board: Board, private val mark: Mark) {
         Either.Right(input)
 
   private fun validate(tileNumber: Int) =
-      if (board.isTileFree(tileNumber))
-        Either.Right(tileNumber)
-      else
+      if (board.isTileTaken(tileNumber))
         Either.Left(InvalidInput.MOVE_TAKEN)
+      else if (board.isTileOutOfBounds(tileNumber))
+        Either.Left(InvalidInput.OUT_OF_BOUNDS)
+      else
+        Either.Right(tileNumber)
 }

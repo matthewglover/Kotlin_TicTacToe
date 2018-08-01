@@ -7,5 +7,5 @@ object ConsoleIO : IO {
 
   override fun readLine(): String? = kotlin.io.readLine()
 
-  override fun write(t: String) = print(t)
+  override fun write(text: String) = print(text)
 }

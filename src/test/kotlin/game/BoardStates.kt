@@ -9,14 +9,6 @@ object BoardStates {
   //   7 | 8 | 9
   val EMPTY = Board()
 
-  //   X | 2 | 3
-  //  -----------
-  //   4 | 5 | 6
-  //  -----------
-  //   7 | 8 | 9
-  val Os_MOVE = Board()
-      .make(Move(1, Mark.ONE))
-
   //   X | O | X
   //  -----------
   //   O | O | X

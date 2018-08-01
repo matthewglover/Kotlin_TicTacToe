@@ -14,9 +14,9 @@ class MockIO : IO {
     return toRead.removeAt(0)
   }
 
-  override fun write(line: String) {
+  override fun write(text: String) {
     funCalls.add("write")
-    written.add(line)
+    written.add(text)
   }
 
   fun callsTo(funName: String) =
