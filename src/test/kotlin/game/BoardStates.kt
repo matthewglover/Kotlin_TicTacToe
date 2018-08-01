@@ -92,7 +92,7 @@ object BoardStates {
           Move(7, Mark.TWO)
       )
 
-  fun runMoves(board: Board = Board(), vararg moves: Move): Board =
+  fun runMoves(board: Board, vararg moves: Move): Board =
       if (moves.isEmpty())
         board
       else
