@@ -1,4 +1,4 @@
-package ui
+package game
 
 enum class InvalidInput(val message: String) {
   MOVE_TAKEN("Oops, that move's already taken!"),

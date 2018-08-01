@@ -15,7 +15,7 @@ class Game(
     }
   }
 
-  fun next() = Game(p1, p2, nextBoard())
+  fun next() = Game(p1, p2, nextMove())
 
   fun notifyResult() {
     if (isOver) {
@@ -23,8 +23,6 @@ class Game(
       p2.notifyResult(board)
     }
   }
-
-  private fun nextBoard() = board.make(nextMove())
 
   private fun nextMove() = currentPlayer.requestMove(board)
 }

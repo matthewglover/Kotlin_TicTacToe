@@ -1,5 +1,7 @@
 package game
 
+import arrow.core.getOrElse
+
 object BoardStates {
 
   //   1 | 2 | 3
@@ -14,64 +16,88 @@ object BoardStates {
   //   O | O | X
   //  -----------
   //   X | X | O
-  val COMPLETE = Board()
-      .make(Move(1, Mark.ONE))
-      .make(Move(2, Mark.TWO))
-      .make(Move(3, Mark.ONE))
-      .make(Move(4, Mark.TWO))
-      .make(Move(8, Mark.ONE))
-      .make(Move(5, Mark.TWO))
-      .make(Move(7, Mark.ONE))
-      .make(Move(9, Mark.TWO))
-      .make(Move(6, Mark.ONE))
+  val COMPLETE =
+      runMoves(
+          EMPTY,
+          Move(1, Mark.ONE),
+          Move(2, Mark.TWO),
+          Move(3, Mark.ONE),
+          Move(4, Mark.TWO),
+          Move(8, Mark.ONE),
+          Move(5, Mark.TWO),
+          Move(7, Mark.ONE),
+          Move(9, Mark.TWO),
+          Move(6, Mark.ONE)
+      )
 
   //   X | X | X
   //  -----------
   //   O | 5 | X
   //  -----------
   //   7 | 8 | 9
-  val X_WINNING_ROW = Board()
-      .make(Move(1, Mark.ONE))
-      .make(Move(4, Mark.TWO))
-      .make(Move(2, Mark.ONE))
-      .make(Move(6, Mark.TWO))
-      .make(Move(3, Mark.ONE))
+  val X_WINNING_ROW =
+      runMoves(
+          EMPTY,
+          Move(1, Mark.ONE),
+          Move(4, Mark.TWO),
+          Move(2, Mark.ONE),
+          Move(6, Mark.TWO),
+          Move(3, Mark.ONE)
+      )
 
   //   X | X | 3
   //  -----------
   //   O | O | O
   //  -----------
   //   X | 8 | 9
-  val O_WINNING_ROW = Board()
-      .make(Move(1, Mark.ONE))
-      .make(Move(4, Mark.TWO))
-      .make(Move(2, Mark.ONE))
-      .make(Move(5, Mark.TWO))
-      .make(Move(7, Mark.ONE))
-      .make(Move(6, Mark.TWO))
+  val O_WINNING_ROW =
+      runMoves(
+          EMPTY,
+          Move(1, Mark.ONE),
+          Move(4, Mark.TWO),
+          Move(2, Mark.ONE),
+          Move(5, Mark.TWO),
+          Move(7, Mark.ONE),
+          Move(6, Mark.TWO)
+      )
 
   //   O | 2 | X
   //  -----------
   //   O | 5 | X
   //  -----------
   //   7 | 8 | X
-  val X_WINNING_COL = Board()
-      .make(Move(3, Mark.ONE))
-      .make(Move(1, Mark.TWO))
-      .make(Move(6, Mark.ONE))
-      .make(Move(4, Mark.TWO))
-      .make(Move(9, Mark.ONE))
+  val X_WINNING_COL =
+      runMoves(
+          EMPTY,
+          Move(3, Mark.ONE),
+          Move(1, Mark.TWO),
+          Move(6, Mark.ONE),
+          Move(4, Mark.TWO),
+          Move(9, Mark.ONE)
+      )
 
   //   O | 2 | 3
   //  -----------
   //   O | X | X
   //  -----------
   //   O | 8 | X
-  val O_WINNING_COL = Board()
-      .make(Move(5, Mark.ONE))
-      .make(Move(1, Mark.TWO))
-      .make(Move(6, Mark.ONE))
-      .make(Move(4, Mark.TWO))
-      .make(Move(9, Mark.ONE))
-      .make(Move(7, Mark.TWO))
+  val O_WINNING_COL =
+      runMoves(
+          EMPTY,
+          Move(5, Mark.ONE),
+          Move(1, Mark.TWO),
+          Move(6, Mark.ONE),
+          Move(4, Mark.TWO),
+          Move(9, Mark.ONE),
+          Move(7, Mark.TWO)
+      )
+
+  fun runMoves(board: Board = Board(), vararg moves: Move): Board =
+      if (moves.isEmpty())
+        board
+      else
+        board
+            .make(moves.first())
+            .map { nextBoard -> runMoves(nextBoard, *moves.drop(1).toTypedArray()) }
+            .getOrElse { board }
 }

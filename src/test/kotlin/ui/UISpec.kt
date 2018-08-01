@@ -1,10 +1,7 @@
 package ui
 
 import com.winterbe.expekt.expect
-import game.Board
-import game.BoardStates
-import game.Move
-import game.Mark
+import game.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
@@ -13,8 +10,9 @@ import org.jetbrains.spek.api.dsl.it
 object UISpec : Spek({
   describe("#requestMove") {
     context("when valid input") {
-      val board = Board()
-      val (mockIO, parsedInput) = Helper.requestMoveWith(board, Mark.ONE, "1")
+      val board = BoardStates.EMPTY
+      val (mockIO, actual) = Helper.requestMoveWith(board, Mark.ONE, "1")
+      val expected = BoardStates.runMoves(board, Move(1, Mark.ONE))
 
       it("clears screen") {
         expect(mockIO.callsTo("clearScreen")).to.equal(1)
@@ -30,18 +28,19 @@ object UISpec : Spek({
 
       it("reads input and parses it to an integer") {
         expect(mockIO.callsTo("readLine")).to.equal(1)
-        expect(parsedInput).to.equal(Move(1, Mark.ONE))
+        expect(actual).to.equal(expected)
       }
     }
 
     context("with non-integer input") {
       val board = Board()
+      val nextBoard = BoardStates.runMoves(board, Move(2, Mark.ONE))
       val invalidInput = "blah"
       val validInput = "2"
-      val (mockIO, parsedInput) = Helper.requestMoveWith(board, Mark.ONE, invalidInput, validInput)
+      val (mockIO, actualBoard) = Helper.requestMoveWith(board, Mark.ONE, invalidInput, validInput)
 
       it("parses valid input") {
-        expect(parsedInput).to.equal(Move(2, Mark.ONE))
+        expect(actualBoard).to.equal(nextBoard)
       }
 
       it("reads two lines of input (once for each move request)") {
@@ -73,13 +72,14 @@ object UISpec : Spek({
     }
 
     context("with move taken input") {
-      val board = Board().make(Move(1, Mark.ONE))
+      val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
       val invalidInput = "1"
       val validInput = "2"
-      val (mockIO, parsedInput) = Helper.requestMoveWith(board, Mark.TWO, invalidInput, validInput)
+      val (mockIO, actual) = Helper.requestMoveWith(board, Mark.TWO, invalidInput, validInput)
+      val expected = BoardStates.runMoves(board, Move(2, Mark.TWO))
 
-      it("parses valid input") {
-        expect(parsedInput).to.equal(Move(2, Mark.TWO))
+      it("parses valid input and returns updated board") {
+        expect(actual).to.equal(expected)
       }
 
       it("reads two lines of input (one for each move request)") {
@@ -173,7 +173,7 @@ object Helper {
     Pair(UI(this), this)
   }
 
-  fun requestMoveWith(board: Board, mark: Mark, vararg inputs: String): Pair<MockIO, Move> {
+  fun requestMoveWith(board: Board, mark: Mark, vararg inputs: String): Pair<MockIO, Board> {
     val (ui, mockIO) = Helper.buildUI()
     inputs.forEach { input ->
       mockIO.toRead.add(input)

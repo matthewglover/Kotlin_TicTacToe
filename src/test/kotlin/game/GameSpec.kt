@@ -11,8 +11,8 @@ object GameSpec : Spek({
     it("requests move from player with current mark and returns next game") {
       val (game, p1, p2, board) = createGame(BoardStates.EMPTY)
 
-      every { p1.requestMove(board) } returns Move(1, Mark.ONE)
-      every { p2.requestMove(any()) } returns Move(2, Mark.TWO)
+      every { p1.requestMove(board) } returns BoardStates.runMoves(board, Move(1, Mark.ONE))
+      every { p2.requestMove(any()) } returns BoardStates.runMoves(board, Move(2, Mark.TWO))
 
       game.next()
           .next()

@@ -10,12 +10,13 @@ object PlayerSpec : Spek({
   describe("requestMove") {
     it("gets player's move from the UI") {
       val (ui, player, mark) = createPlayer(Mark.ONE)
+      val board = BoardStates.EMPTY
 
-      every { ui.requestMove(any(), any()) } returns Move(1, mark)
+      every { ui.requestMove(any(), any()) } returns BoardStates.runMoves(board, Move(1, mark))
 
-      player.requestMove(BoardStates.EMPTY)
+      player.requestMove(board)
 
-      verify { ui.requestMove(BoardStates.EMPTY, mark) }
+      verify { ui.requestMove(board, mark) }
     }
   }
 

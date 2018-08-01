@@ -3,15 +3,15 @@ package ui
 import game.Board
 import arrow.core.Either
 import arrow.core.flatMap
+import game.InvalidInput
 import game.Mark
 import game.Move
 
 class MoveParser(private val board: Board, private val mark: Mark) {
-  fun parse(input: String?): Either<InvalidInput, Move> =
+  fun parse(input: String?): Either<InvalidInput, Board> =
       parseToString(input)
           .flatMap(::parseToInt)
-          .flatMap(::validate)
-          .map { Move(it, mark) }
+          .flatMap(::makeMove)
 
   private fun parseToInt(input: String) =
       try {
@@ -26,11 +26,6 @@ class MoveParser(private val board: Board, private val mark: Mark) {
       else
         Either.Right(input)
 
-  private fun validate(tileNumber: Int) =
-      if (board.isTileTaken(tileNumber))
-        Either.Left(InvalidInput.MOVE_TAKEN)
-      else if (board.isTileOutOfBounds(tileNumber))
-        Either.Left(InvalidInput.OUT_OF_BOUNDS)
-      else
-        Either.Right(tileNumber)
+  private fun makeMove(tileNumber: Int) =
+      board.make(Move(tileNumber, mark))
 }

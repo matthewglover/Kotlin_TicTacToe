@@ -11,10 +11,12 @@ import org.jetbrains.spek.api.dsl.it
 object MoveParserSpec : Spek({
   describe("MoveInputValidator") {
     context("with free square") {
-      it("returns Right of move") {
-        val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
+      it("returns Right of board with move made") {
+        val board = BoardStates.EMPTY
+        val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
+        val parser = MoveParser(board, Mark.ONE)
 
-        expect(parser.parse("1")).to.equal(Either.Right(Move(1, Mark.ONE)))
+        expect(parser.parse("1")).to.equal(Either.Right(nextBoard))
       }
     }
 
@@ -36,7 +38,7 @@ object MoveParserSpec : Spek({
 
     context("with taken square") {
       it("returns Left of move-taken invalid input") {
-        val board = BoardStates.EMPTY.make(Move(1, Mark.ONE))
+        val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
         val parser = MoveParser(board, Mark.TWO)
 
         expect(parser.parse("1")).to.equal(Either.Left(InvalidInput.MOVE_TAKEN))

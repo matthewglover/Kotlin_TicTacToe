@@ -2,8 +2,8 @@ package ui
 
 import arrow.core.identity
 import game.Board
+import game.InvalidInput
 import game.Mark
-import game.Move
 
 class MoveRequester(
   private val io: IO,
@@ -25,7 +25,7 @@ class MoveRequester(
     ).joinToString("\n")
   }
 
-  fun run(): Move {
+  fun run(): Board {
     io.clearScreen()
     io.write(renderedMoveState)
     return parseMove(io.readLine())

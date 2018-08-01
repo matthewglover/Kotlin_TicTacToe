@@ -1,5 +1,7 @@
 package game
 
+import arrow.core.Either
+
 class Board(private val moves: List<Move> = listOf()) {
 
   val currentMark by lazy { if (equalMoves) Mark.ONE else Mark.TWO }
@@ -22,16 +24,26 @@ class Board(private val moves: List<Move> = listOf()) {
 
   private val totalSquares by lazy { size * size }
 
-  fun equals(other: Board) =
-      other.moves == moves
+  override fun equals(other: Any?): Boolean =
+      other is Board && other.moves == moves
 
-  fun make(move: Move) = Board(moves + listOf(move))
+  fun make(move: Move) =
+      if (isTileTaken(move.number)) {
+        Either.Left(InvalidInput.MOVE_TAKEN)
+      } else if (isTileOutOfBounds(move.number)) {
+        Either.Left(InvalidInput.OUT_OF_BOUNDS)
+      } else {
+        Either.Right(Board(moves + listOf(move)))
+      }
 
   fun tile(number: Int): Tile = moves.find { it.number == number } ?: FreeTile(number)
 
-  fun isTileOutOfBounds(tileNumber: Int) = !isTileInBounds(tileNumber)
+  override fun toString() =
+    "Board<moves=\"$moves\">"
 
-  fun isTileTaken(tileNumber: Int) = !isTileFree(tileNumber)
+  private fun isTileOutOfBounds(tileNumber: Int) = !isTileInBounds(tileNumber)
+
+  private fun isTileTaken(tileNumber: Int) = !isTileFree(tileNumber)
 
   private fun isTileFree(tileNumber: Int) = moves.none { it.number == tileNumber }
 
