@@ -65,7 +65,7 @@ object UISpec : Spek({
       it("secondly, warns of invalid (non-integer) input and writes another request message for Mark TWO's move") {
         expect(mockIO.written.last()).to.equal(
             BoardRenderer(board).rendered + "\n" +
-                InvalidInput.NON_INTEGER.message + "\n" +
+                NonInteger.message + "\n" +
                 "${Mark.ONE}'s turn! Choose your move: "
         )
       }
@@ -104,7 +104,7 @@ object UISpec : Spek({
       it("secondly, warns of invalid input and writes another request message for Mark TWO's move") {
         expect(mockIO.written.last()).to.equal(
             BoardRenderer(board).rendered + "\n" +
-                InvalidInput.MOVE_TAKEN.message + "\n" +
+                MoveTaken.message + "\n" +
                 "${Mark.TWO}'s turn! Choose your move: "
         )
       }

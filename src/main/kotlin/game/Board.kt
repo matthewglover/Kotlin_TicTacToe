@@ -24,30 +24,24 @@ class Board(private val moves: List<Move> = listOf()) {
 
   private val totalSquares by lazy { size * size }
 
-  override fun equals(other: Any?): Boolean =
-      other is Board && other.moves == moves
+  override fun equals(other: Any?): Boolean = other is Board && other.moves == moves
 
   fun make(move: Move) =
-      if (isTileTaken(move.number)) {
-        Either.Left(InvalidInput.MOVE_TAKEN)
-      } else if (isTileOutOfBounds(move.number)) {
-        Either.Left(InvalidInput.OUT_OF_BOUNDS)
-      } else {
-        Either.Right(Board(moves + listOf(move)))
+      when {
+        isTileTaken(move) -> Either.Left(MoveTaken)
+        isTileOutOfBounds(move) -> Either.Left(MoveOutOfBounds)
+        else -> Either.Right(Board(moves + listOf(move)))
       }
 
-  fun tile(number: Int): Tile = moves.find { it.number == number } ?: FreeTile(number)
+  fun tile(tileNumber: Int): Tile = moves.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
 
-  override fun toString() =
-    "Board<moves=\"$moves\">"
+  override fun toString() = "Board<moves=$moves>"
 
-  private fun isTileOutOfBounds(tileNumber: Int) = !isTileInBounds(tileNumber)
+  private fun isTileInBounds(move: Move) = move.tileNumber in 0..totalSquares
 
-  private fun isTileTaken(tileNumber: Int) = !isTileFree(tileNumber)
+  private fun isTileOutOfBounds(move: Move) = !isTileInBounds(move)
 
-  private fun isTileFree(tileNumber: Int) = moves.none { it.number == tileNumber }
-
-  private fun isTileInBounds(tileNumber: Int) = tileNumber in 0..totalSquares
+  private fun isTileTaken(move: Move) = moves.any { it.tileNumber == move.tileNumber }
 
   private fun movesBy(mark: Mark) = moves.filter { it.mark == mark }.size
 }

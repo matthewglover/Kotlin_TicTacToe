@@ -24,7 +24,7 @@ object MoveParserSpec : Spek({
       it("returns Left of non-integer invalid input") {
         val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
 
-        expect(parser.parse("blah")).to.equal(Either.Left(InvalidInput.NON_INTEGER))
+        expect(parser.parse("blah")).to.equal(Either.Left(NonInteger))
       }
     }
 
@@ -32,7 +32,7 @@ object MoveParserSpec : Spek({
       it("returns Left of non-integer invalid input") {
         val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
 
-        expect(parser.parse(null)).to.equal(Either.Left(InvalidInput.NON_INTEGER))
+        expect(parser.parse(null)).to.equal(Either.Left(NonInteger))
       }
     }
 
@@ -41,7 +41,7 @@ object MoveParserSpec : Spek({
         val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
         val parser = MoveParser(board, Mark.TWO)
 
-        expect(parser.parse("1")).to.equal(Either.Left(InvalidInput.MOVE_TAKEN))
+        expect(parser.parse("1")).to.equal(Either.Left(MoveTaken))
       }
     }
 
@@ -49,7 +49,7 @@ object MoveParserSpec : Spek({
       it("returns Left of out-of-bounds invalid input") {
         val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
 
-        expect(parser.parse("10")).to.equal(Either.Left(InvalidInput.OUT_OF_BOUNDS))
+        expect(parser.parse("10")).to.equal(Either.Left(MoveOutOfBounds))
       }
     }
   }

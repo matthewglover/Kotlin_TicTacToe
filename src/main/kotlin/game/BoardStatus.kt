@@ -24,7 +24,7 @@ class BoardStatus(private val moves: List<Move> = listOf()) {
 
   private fun movesBy(mark: Mark) =
       moves.filter { it.mark == mark }
-          .map { it.number }
+          .map { it.tileNumber }
 
   private fun isWinningLine(moveNumbers: List<Int>) =
       lines.any(moveNumbers::containsAll)

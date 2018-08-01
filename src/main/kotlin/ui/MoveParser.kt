@@ -1,14 +1,11 @@
 package ui
 
-import game.Board
 import arrow.core.Either
 import arrow.core.flatMap
-import game.InvalidInput
-import game.Mark
-import game.Move
+import game.*
 
 class MoveParser(private val board: Board, private val mark: Mark) {
-  fun parse(input: String?): Either<InvalidInput, Board> =
+  fun parse(input: String?): Either<InvalidData, Board> =
       parseToString(input)
           .flatMap(::parseToInt)
           .flatMap(::makeMove)
@@ -17,12 +14,12 @@ class MoveParser(private val board: Board, private val mark: Mark) {
       try {
         Either.Right(input.toInt())
       } catch (e: NumberFormatException) {
-        Either.Left(InvalidInput.NON_INTEGER)
+        Either.Left(NonInteger)
       }
 
   private fun parseToString(input: String?) =
       if (input == null)
-        Either.Left(InvalidInput.NON_INTEGER)
+        Either.Left(NonInteger)
       else
         Either.Right(input)
 
