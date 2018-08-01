@@ -21,10 +21,6 @@ object GameSpec : Spek({
         p1.requestMove(board)
         p2.requestMove(any())
       }
-
-      verify(exactly = 1) {
-        p2.notifyResult(board.make(Move(1, Mark.ONE)))
-      }
     }
   }
 
