@@ -14,10 +14,7 @@ fun playGame(game: Game) {
 
 fun main(args: Array<String>) {
   val ui = UI(ConsoleIO)
-  val p1 = Player(ui, Mark.ONE)
-  val p2 = Player(ui, Mark.TWO)
-  val board = Board()
-  val game = Game(p1, p2, board)
+  val game = GameFactory.from(ui)
 
   playGame(game)
 }

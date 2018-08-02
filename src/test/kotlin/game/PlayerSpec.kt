@@ -1,12 +1,29 @@
 package game
 
+import com.winterbe.expekt.expect
 import io.mockk.*
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import ui.UI
 
 object PlayerSpec : Spek({
+  describe("has") {
+    val (_, player) = createPlayer(Mark.ONE)
+
+    context("when Mark matches player's mark") {
+      it("is true") {
+        expect(player.has(Mark.ONE)).to.be.`true`
+      }
+    }
+
+    context("when Mark doesn't match player's mark") {
+      it("is false") {
+        expect(player.has(Mark.TWO)).to.be.`false`
+      }
+    }
+  }
   describe("requestMove") {
     it("gets player's move from the UI") {
       val (ui, player, mark) = createPlayer(Mark.ONE)

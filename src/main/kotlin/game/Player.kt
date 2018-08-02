@@ -4,6 +4,13 @@ import ui.UI
 
 class Player(private val ui: UI, private val mark: Mark) {
 
+  override fun equals(other: Any?) =
+      other is Player &&
+          other.ui == ui &&
+          other.mark == mark
+
+  fun has(comparison: Mark) = mark == comparison
+
   fun notifyResult(board: Board) {
     if (shouldNotify(board)) ui.notifyResult(board)
   }

@@ -9,11 +9,14 @@ class Game(
   val isOver by lazy { board.isComplete }
 
   private val currentPlayer by lazy {
-    when (board.currentMark) {
-      Mark.ONE -> p1
-      Mark.TWO -> p2
-    }
+    if (p1.has(board.currentMark)) p1 else p2
   }
+
+  override fun equals(other: Any?) =
+      other is Game &&
+          other.board == board &&
+          other.p1 == p1 &&
+          other.p2 == p2
 
   fun next() = Game(p1, p2, nextMove())
 

@@ -10,16 +10,18 @@ object GameSpec : Spek({
   describe("next") {
     it("requests move from player with current mark and returns next game") {
       val (game, p1, p2, board) = createGame(BoardStates.EMPTY)
+      val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
+      val anyBoard = BoardStates.runMoves(nextBoard, Move(2, Mark.TWO))
 
-      every { p1.requestMove(board) } returns BoardStates.runMoves(board, Move(1, Mark.ONE))
-      every { p2.requestMove(any()) } returns BoardStates.runMoves(board, Move(2, Mark.TWO))
+      every { p1.requestMove(board) } returns nextBoard
+      every { p2.requestMove(any()) } returns anyBoard
 
       game.next()
           .next()
 
-      verifySequence {
+      verifyOrder {
         p1.requestMove(board)
-        p2.requestMove(any())
+        p2.requestMove(nextBoard)
       }
     }
   }
@@ -83,6 +85,9 @@ object GameSpec : Spek({
 fun createGame(board: Board): GameConfig {
   val p1 = mockk<Player>()
   val p2 = mockk<Player>()
+
+  every { p1.has(any()) } answers { firstArg<Mark>() == Mark.ONE }
+  every { p2.has(any()) } answers { firstArg<Mark>() == Mark.TWO }
 
   return GameConfig(Game(p1, p2, board), p1, p2, board)
 }
