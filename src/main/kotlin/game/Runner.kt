@@ -8,7 +8,7 @@ fun playGame(game: Game) {
     game.notifyResult()
   }
   else {
-    playGame(game.next())
+    game.next(::playGame)
   }
 }
 

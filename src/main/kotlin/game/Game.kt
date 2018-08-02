@@ -8,17 +8,20 @@ class Game(
 
   val isOver by lazy { board.isComplete }
 
-  private val currentPlayer by lazy {
-    if (p1.has(board.currentMark)) p1 else p2
-  }
-
   override fun equals(other: Any?) =
       other is Game &&
           other.board == board &&
           other.p1 == p1 &&
           other.p2 == p2
 
-  fun next() = Game(p1, p2, nextMove())
+  fun next(onGameUpdate: (Game) -> Unit) {
+    val onBoardUpdate = { nextBoard: Board ->
+      onGameUpdate(Game(p1, p2, nextBoard))
+    }
+
+    p1.requestMove(board, onBoardUpdate)
+    p2.requestMove(board, onBoardUpdate)
+  }
 
   fun notifyResult() {
     if (isOver) {
@@ -26,6 +29,4 @@ class Game(
       p2.notifyResult(board)
     }
   }
-
-  private fun nextMove() = currentPlayer.requestMove(board)
 }

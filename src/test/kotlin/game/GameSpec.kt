@@ -3,25 +3,45 @@ package game
 import com.winterbe.expekt.expect
 import io.mockk.*
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import ui.UI
 
 object GameSpec : Spek({
   describe("next") {
-    it("requests move from player with current mark and returns next game") {
-      val (game, p1, p2, board) = createGame(BoardStates.EMPTY)
-      val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
-      val anyBoard = BoardStates.runMoves(nextBoard, Move(2, Mark.TWO))
+    context("player 1's next move") {
+      it("calls callback with Game updated with p1's next move") {
+        val mockUI = mockk<UI>()
+        val game = GameFactory.from(mockUI)
+        val nextBoard = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
+        val nextGame = GameFactory.from(mockUI, nextBoard)
+        val cb = mockk<(Game) -> Unit>()
 
-      every { p1.requestMove(board) } returns nextBoard
-      every { p2.requestMove(any()) } returns anyBoard
+        every { cb(any()) } just Runs
+        every { mockUI.requestMove(any(), any()) } returns nextBoard
 
-      game.next()
-          .next()
+        game.next(cb)
 
-      verifyOrder {
-        p1.requestMove(board)
-        p2.requestMove(nextBoard)
+        verify { cb(nextGame) }
+      }
+    }
+
+    context("player 2's next move") {
+      it("calls callback with Game updated with p2's next move") {
+        val mockUI = mockk<UI>()
+        val initialBoard = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
+        val game = GameFactory.from(mockUI, initialBoard)
+        val nextBoard = BoardStates.runMoves(initialBoard, Move(2, Mark.TWO))
+        val nextGame = GameFactory.from(mockUI, nextBoard)
+        val cb = mockk<(Game) -> Unit>()
+
+        every { cb(any()) } just Runs
+        every { mockUI.requestMove(any(), any()) } returns nextBoard
+
+        game.next(cb)
+
+        verify { cb(nextGame) }
       }
     }
   }
@@ -85,9 +105,6 @@ object GameSpec : Spek({
 fun createGame(board: Board): GameConfig {
   val p1 = mockk<Player>()
   val p2 = mockk<Player>()
-
-  every { p1.has(any()) } answers { firstArg<Mark>() == Mark.ONE }
-  every { p2.has(any()) } answers { firstArg<Mark>() == Mark.TWO }
 
   return GameConfig(Game(p1, p2, board), p1, p2, board)
 }

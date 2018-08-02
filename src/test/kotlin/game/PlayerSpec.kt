@@ -1,6 +1,5 @@
 package game
 
-import com.winterbe.expekt.expect
 import io.mockk.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
@@ -9,73 +8,85 @@ import org.jetbrains.spek.api.dsl.it
 import ui.UI
 
 object PlayerSpec : Spek({
-  describe("has") {
-    val (_, player) = createPlayer(Mark.ONE)
-
-    context("when Mark matches player's mark") {
-      it("is true") {
-        expect(player.has(Mark.ONE)).to.be.`true`
-      }
-    }
-
-    context("when Mark doesn't match player's mark") {
-      it("is false") {
-        expect(player.has(Mark.TWO)).to.be.`false`
-      }
-    }
-  }
   describe("requestMove") {
-    it("gets player's move from the UI") {
-      val (ui, player, mark) = createPlayer(Mark.ONE)
-      val board = BoardStates.EMPTY
+    context("when it is player's move") {
+      it("calls the callback with the updated board") {
+        val (ui, player, mark) = createPlayer(Mark.ONE)
+        val board = BoardStates.EMPTY
+        val nextBoard = BoardStates.runMoves(board, Move(1, mark))
+        val cb = mockk<(Board) -> Unit>(relaxed = true)
 
-      every { ui.requestMove(any(), any()) } returns BoardStates.runMoves(board, Move(1, mark))
+        every { ui.requestMove(any(), any()) } returns nextBoard
 
-      player.requestMove(board)
+        player.requestMove(board, cb)
 
-      verify { ui.requestMove(board, mark) }
+        verify { cb(nextBoard) }
+      }
+    }
+
+    context("when it is not the player's move") {
+      it("does not call the callback") {
+        val (ui, player, mark) = createPlayer(Mark.TWO)
+        val board = BoardStates.EMPTY
+        val nextBoard = BoardStates.runMoves(board, Move(1, mark))
+        val cb = mockk<(Board) -> Unit>(relaxed = true)
+
+        every { ui.requestMove(any(), any()) } returns nextBoard
+
+        player.requestMove(board, cb)
+
+        verify(exactly = 0) { cb(any()) }
+      }
     }
   }
 
   describe("notifyResult") {
-    it("notifies UI of result if Player has won") {
-      val (ui, player) = createPlayer(Mark.ONE)
+    context("when Player has won") {
+      it("notifies UI of result") {
+        val (ui, player) = createPlayer(Mark.ONE)
 
-      every { ui.notifyResult(any()) } just Runs
+        every { ui.notifyResult(any()) } just Runs
 
-      player.notifyResult(BoardStates.X_WINNING_ROW)
+        player.notifyResult(BoardStates.X_WINNING_ROW)
 
-      verify { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+        verify { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+      }
     }
 
-    it("does not notify UI of result if Player has lost") {
-      val (ui, player) = createPlayer(Mark.TWO)
+    context("when Player has lost") {
+      it("does not notify UI of result") {
+        val (ui, player) = createPlayer(Mark.TWO)
 
-      every { ui.notifyResult(any()) } just Runs
+        every { ui.notifyResult(any()) } just Runs
 
-      player.notifyResult(BoardStates.X_WINNING_ROW)
+        player.notifyResult(BoardStates.X_WINNING_ROW)
 
-      verify(exactly = 0) { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+        verify(exactly = 0) { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+      }
     }
 
-    it("notifies UI of result if it's a draw AND Player made last move") {
-      val (ui, player) = createPlayer(Mark.ONE)
+    context("when Player has played drawing move") {
+      it("notifies UI of result") {
+        val (ui, player) = createPlayer(Mark.ONE)
 
-      every { ui.notifyResult(any()) } just Runs
+        every { ui.notifyResult(any()) } just Runs
 
-      player.notifyResult(BoardStates.COMPLETE)
+        player.notifyResult(BoardStates.COMPLETE)
 
-      verify(exactly = 1) { ui.notifyResult(BoardStates.COMPLETE) }
+        verify(exactly = 1) { ui.notifyResult(BoardStates.COMPLETE) }
+      }
     }
 
-    it("does not notify UI of result if it's a draw AND Player did not make last move") {
-      val (ui, player) = createPlayer(Mark.TWO)
+    context("when Player has not played drawing move") {
+      it("does not notify UI of result") {
+        val (ui, player) = createPlayer(Mark.TWO)
 
-      every { ui.notifyResult(any()) } just Runs
+        every { ui.notifyResult(any()) } just Runs
 
-      player.notifyResult(BoardStates.COMPLETE)
+        player.notifyResult(BoardStates.COMPLETE)
 
-      verify(exactly = 0) { ui.notifyResult(BoardStates.COMPLETE) }
+        verify(exactly = 0) { ui.notifyResult(BoardStates.COMPLETE) }
+      }
     }
   }
 })
