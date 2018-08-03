@@ -2,7 +2,7 @@ package game
 
 import arrow.core.Either
 
-class Board(private val moves: List<Move> = listOf()) {
+data class Board(private val moves: List<Move> = listOf()) {
 
   val isComplete by lazy { isFull || isWinner }
 
@@ -24,7 +24,7 @@ class Board(private val moves: List<Move> = listOf()) {
 
   private val totalSquares by lazy { size * size }
 
-  override fun equals(other: Any?): Boolean = other is Board && other.moves == moves
+  override fun toString() = "Board<moves=$moves>"
 
   fun isCurrentMark(mark: Mark) = currentMark == mark
 
@@ -38,8 +38,6 @@ class Board(private val moves: List<Move> = listOf()) {
   fun tile(tileNumber: Int): Tile = moves.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
 
   fun wasLastMark(mark: Mark) = lastMark == mark
-
-  override fun toString() = "Board<moves=$moves>"
 
   private fun isTileInBounds(move: Move) = move.tileNumber in 0..totalSquares
 

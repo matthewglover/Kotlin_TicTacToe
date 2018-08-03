@@ -2,12 +2,7 @@ package game
 
 import ui.UI
 
-class Player(private val ui: UI, private val mark: Mark) {
-
-  override fun equals(other: Any?) =
-      other is Player &&
-          other.ui == ui &&
-          other.mark == mark
+data class Player(private val ui: UI, private val mark: Mark) {
 
   fun notifyResult(board: Board, onGameOver: () -> Unit) {
     if (shouldNotifyResult(board)) {
