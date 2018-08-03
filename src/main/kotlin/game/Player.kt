@@ -9,9 +9,10 @@ class Player(private val ui: UI, private val mark: Mark) {
           other.ui == ui &&
           other.mark == mark
 
-  fun notifyResult(board: Board) {
+  fun notifyResult(board: Board, onGameOver: () -> Unit) {
     if (shouldNotifyResult(board)) {
       ui.notifyResult(board)
+      onGameOver()
     }
   }
 

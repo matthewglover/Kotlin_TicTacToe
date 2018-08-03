@@ -44,48 +44,60 @@ object PlayerSpec : Spek({
     context("when Player has won") {
       it("notifies UI of result") {
         val (ui, player) = createPlayer(Mark.ONE)
+        val onGameOver = mockk<() -> Unit>()
 
         every { ui.notifyResult(any()) } just Runs
+        every { onGameOver() } just Runs
 
-        player.notifyResult(BoardStates.X_WINNING_ROW)
+        player.notifyResult(BoardStates.X_WINNING_ROW, onGameOver)
 
         verify { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+        verify { onGameOver() }
       }
     }
 
     context("when Player has lost") {
       it("does not notify UI of result") {
         val (ui, player) = createPlayer(Mark.TWO)
+        val onGameOver = mockk<() -> Unit>()
 
         every { ui.notifyResult(any()) } just Runs
+        every { onGameOver() } just Runs
 
-        player.notifyResult(BoardStates.X_WINNING_ROW)
+        player.notifyResult(BoardStates.X_WINNING_ROW, onGameOver)
 
         verify(exactly = 0) { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+        verify(exactly = 0) { onGameOver() }
       }
     }
 
     context("when Player has played drawing move") {
       it("notifies UI of result") {
         val (ui, player) = createPlayer(Mark.ONE)
+        val onGameOver = mockk<() -> Unit>()
 
         every { ui.notifyResult(any()) } just Runs
+        every { onGameOver() } just Runs
 
-        player.notifyResult(BoardStates.COMPLETE)
+        player.notifyResult(BoardStates.COMPLETE, onGameOver)
 
         verify(exactly = 1) { ui.notifyResult(BoardStates.COMPLETE) }
+        verify(exactly = 1) { onGameOver() }
       }
     }
 
     context("when Player has not played drawing move") {
       it("does not notify UI of result") {
         val (ui, player) = createPlayer(Mark.TWO)
+        val onGameOver = mockk<() -> Unit>()
 
         every { ui.notifyResult(any()) } just Runs
+        every { onGameOver() } just Runs
 
-        player.notifyResult(BoardStates.COMPLETE)
+        player.notifyResult(BoardStates.COMPLETE, onGameOver)
 
         verify(exactly = 0) { ui.notifyResult(BoardStates.COMPLETE) }
+        verify(exactly = 0) { onGameOver() }
       }
     }
   }

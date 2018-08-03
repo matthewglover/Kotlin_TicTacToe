@@ -6,6 +6,8 @@ class Game(
     private val board: Board
 ) {
 
+  private val players = listOf(p1, p2)
+
   override fun equals(other: Any?) =
       other is Game &&
           other.board == board &&
@@ -21,17 +23,14 @@ class Game(
   }
 
   private fun notifyResult(onGameOver: () -> Unit) {
-    p1.notifyResult(board)
-    p2.notifyResult(board)
-    onGameOver()
+    players.forEach { player -> player.notifyResult(board, onGameOver) }
   }
 
   private fun requestMove(onGameUpdate: (Game) -> Unit) {
-    val onBoardUpdate = { nextBoard: Board ->
-      onGameUpdate(Game(p1, p2, nextBoard))
+    players.forEach { player ->
+     player.requestMove(board) { nextBoard: Board ->
+       onGameUpdate(Game(p1, p2, nextBoard))
+     }
     }
-
-    p1.requestMove(board, onBoardUpdate)
-    p2.requestMove(board, onBoardUpdate)
   }
 }
