@@ -4,17 +4,17 @@ import arrow.core.Either
 
 class Board(private val moves: List<Move> = listOf()) {
 
-  val currentMark by lazy { if (equalMoves) Mark.ONE else Mark.TWO }
-
   val isComplete by lazy { isFull || isWinner }
 
   val isWinner by lazy { status.isWinner }
 
-  val lastMark by lazy { moves.lastOrNull()?.mark }
-
   val winner by lazy { status.winner }
 
+  private val currentMark by lazy { if (equalMoves) Mark.ONE else Mark.TWO }
+
   private val equalMoves by lazy { movesBy(Mark.ONE) == movesBy(Mark.TWO) }
+
+  private val lastMark by lazy { moves.lastOrNull()?.mark }
 
   private val isFull by lazy { moves.size == totalSquares }
 
@@ -26,6 +26,8 @@ class Board(private val moves: List<Move> = listOf()) {
 
   override fun equals(other: Any?): Boolean = other is Board && other.moves == moves
 
+  fun isCurrentMark(mark: Mark) = currentMark == mark
+
   fun make(move: Move) =
       when {
         isTileTaken(move) -> Either.Left(MoveTaken)
@@ -34,6 +36,8 @@ class Board(private val moves: List<Move> = listOf()) {
       }
 
   fun tile(tileNumber: Int): Tile = moves.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
+
+  fun wasLastMark(mark: Mark) = lastMark == mark
 
   override fun toString() = "Board<moves=$moves>"
 

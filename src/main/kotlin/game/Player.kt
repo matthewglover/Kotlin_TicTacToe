@@ -10,20 +10,22 @@ class Player(private val ui: UI, private val mark: Mark) {
           other.mark == mark
 
   fun notifyResult(board: Board) {
-    if (shouldNotify(board)) ui.notifyResult(board)
-  }
-
-  fun requestMove(board: Board, cb: (Board) -> Unit) {
-    if (isTurn(board)) {
-      cb(ui.requestMove(board, mark))
+    if (shouldNotifyResult(board)) {
+      ui.notifyResult(board)
     }
   }
 
-  private fun isTurn(board: Board) = board.currentMark == mark
+  fun requestMove(board: Board, onUpdateBoard: (Board) -> Unit) {
+    if (isTurn(board)) {
+      onUpdateBoard(ui.requestMove(board, mark))
+    }
+  }
 
-  private fun shouldNotify(board: Board) = playerWon(board) || playerMadeDrawingMove(board)
+  private fun isTurn(board: Board) = board.isCurrentMark(mark)
+
+  private fun playerMadeDrawingMove(board: Board) = board.isComplete && board.wasLastMark(mark)
+
+  private fun shouldNotifyResult(board: Board) = playerWon(board) || playerMadeDrawingMove(board)
 
   private fun playerWon(board: Board) = board.winner == mark
-
-  private fun playerMadeDrawingMove(board: Board) = board.isComplete && (board.lastMark == mark)
 }

@@ -2,6 +2,7 @@ package game
 
 import com.winterbe.expekt.expect
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
@@ -24,14 +25,35 @@ object BoardSpec : Spek({
     }
   }
 
-  describe("lastMark") {
-    it("is null for empty board") {
-      expect(BoardStates.EMPTY.lastMark).to.be.`null`
+  describe("wasLastMark") {
+    context("with an empty board") {
+      it("Mark.ONE is false") {
+        expect(BoardStates.EMPTY.wasLastMark(Mark.ONE)).to.be.`false`
+      }
+
+      it("Mark.TWO is false") {
+        expect(BoardStates.EMPTY.wasLastMark(Mark.TWO)).to.be.`false`
+      }
     }
 
-    it("is mark of last move made") {
-      expect(BoardStates.X_WINNING_ROW.lastMark).to.equal(Mark.ONE)
-      expect(BoardStates.O_WINNING_COL.lastMark).to.equal(Mark.TWO)
+    context("when Mark.ONE moved last") {
+      it("Mark.ONE is true") {
+        expect(BoardStates.X_WINNING_ROW.wasLastMark(Mark.ONE)).to.be.`true`
+      }
+
+      it("Mark.TWO is false") {
+        expect(BoardStates.X_WINNING_ROW.wasLastMark(Mark.TWO)).to.be.`false`
+      }
+    }
+
+    context("when Mark.TWO moved last") {
+      it("Mark.TWO is true") {
+        expect(BoardStates.O_WINNING_ROW.wasLastMark(Mark.TWO)).to.be.`true`
+      }
+
+      it("Mark.ONE is false") {
+        expect(BoardStates.O_WINNING_ROW.wasLastMark(Mark.ONE)).to.be.`false`
+      }
     }
   }
 })
