@@ -21,10 +21,8 @@ data class Game(
   }
 
   private fun requestMove(onGameUpdate: (Game) -> Unit) {
-    players.forEach {
-     it.requestMove(board) { nextBoard: Board ->
-       onGameUpdate(Game(p1, p2, nextBoard))
-     }
-    }
+    val onBoardUpdate = { nextBoard: Board -> onGameUpdate(Game(p1, p2, nextBoard)) }
+
+    players.forEach { it.requestMove(board, onBoardUpdate) }
   }
 }

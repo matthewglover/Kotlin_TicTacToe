@@ -24,12 +24,12 @@ data class Board(private val moves: List<Move> = listOf()) {
 
   private val totalSquares by lazy { size * size }
 
-  override fun toString() = "Board<moves=$moves>"
-
-  fun isCurrentMark(mark: Mark) = currentMark == mark
+  fun isCurrentMark(mark: Mark?) =
+      if (isComplete) false else currentMark == mark
 
   fun make(move: Move) =
       when {
+        isMoveOutOfTurn(move) -> Either.Left(MoveOutOfTurn)
         isTileTaken(move) -> Either.Left(MoveTaken)
         isTileOutOfBounds(move) -> Either.Left(MoveOutOfBounds)
         else -> Either.Right(Board(moves + listOf(move)))
@@ -38,6 +38,8 @@ data class Board(private val moves: List<Move> = listOf()) {
   fun tile(tileNumber: Int): Tile = moves.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
 
   fun wasLastMark(mark: Mark) = lastMark == mark
+
+  private fun isMoveOutOfTurn(move: Move) = !isCurrentMark(move.mark)
 
   private fun isTileInBounds(move: Move) = move.tileNumber in 0..totalSquares
 
