@@ -87,7 +87,7 @@ object BoardSpec : Spek({
   }
 
   describe("Mark.ONE Winning board") {
-    listOf(BoardStates.X_WINNING_ROW, BoardStates.X_WINNING_COL)
+    listOf(BoardStates.MARK_ONE_WINNING_ROW, BoardStates.MARK_ONE_WINNING_COL)
         .forEach { board ->
           it("is complete") {
             expect(board.isComplete).to.be.`true`
@@ -111,7 +111,7 @@ object BoardSpec : Spek({
   }
 
   describe("Mark.TWO Winning board") {
-    listOf(BoardStates.O_WINNING_ROW, BoardStates.O_WINNING_COL)
+    listOf(BoardStates.MARK_TWO_WINNING_ROW, BoardStates.MARK_TWO_WINNING_COL)
         .forEach { board ->
           it("is complete") {
             expect(board.isComplete).to.be.`true`

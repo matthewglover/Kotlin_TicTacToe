@@ -35,7 +35,7 @@ object BoardStates {
   //   O | 5 | X
   //  -----------
   //   7 | 8 | 9
-  val X_WINNING_ROW =
+  val MARK_ONE_WINNING_ROW =
       runMoves(
           EMPTY,
           Move(1, Mark.ONE),
@@ -50,7 +50,7 @@ object BoardStates {
   //   O | O | O
   //  -----------
   //   X | 8 | 9
-  val O_WINNING_ROW =
+  val MARK_TWO_WINNING_ROW =
       runMoves(
           EMPTY,
           Move(1, Mark.ONE),
@@ -66,7 +66,7 @@ object BoardStates {
   //   O | 5 | X
   //  -----------
   //   7 | 8 | X
-  val X_WINNING_COL =
+  val MARK_ONE_WINNING_COL =
       runMoves(
           EMPTY,
           Move(3, Mark.ONE),
@@ -81,7 +81,7 @@ object BoardStates {
   //   O | X | X
   //  -----------
   //   O | 8 | X
-  val O_WINNING_COL =
+  val MARK_TWO_WINNING_COL =
       runMoves(
           EMPTY,
           Move(5, Mark.ONE),

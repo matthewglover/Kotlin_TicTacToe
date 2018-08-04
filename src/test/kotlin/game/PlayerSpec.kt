@@ -49,9 +49,9 @@ object PlayerSpec : Spek({
         every { ui.notifyResult(any()) } just Runs
         every { onGameOver() } just Runs
 
-        player.notifyResult(BoardStates.X_WINNING_ROW, onGameOver)
+        player.notifyResult(BoardStates.MARK_ONE_WINNING_ROW, onGameOver)
 
-        verify { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+        verify { ui.notifyResult(BoardStates.MARK_ONE_WINNING_ROW) }
         verify { onGameOver() }
       }
     }
@@ -64,9 +64,9 @@ object PlayerSpec : Spek({
         every { ui.notifyResult(any()) } just Runs
         every { onGameOver() } just Runs
 
-        player.notifyResult(BoardStates.X_WINNING_ROW, onGameOver)
+        player.notifyResult(BoardStates.MARK_ONE_WINNING_ROW, onGameOver)
 
-        verify(exactly = 0) { ui.notifyResult(BoardStates.X_WINNING_ROW) }
+        verify(exactly = 0) { ui.notifyResult(BoardStates.MARK_ONE_WINNING_ROW) }
         verify(exactly = 0) { onGameOver() }
       }
     }

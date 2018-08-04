@@ -114,7 +114,7 @@ object UISpec : Spek({
   describe("notifyResult") {
     context("when there's a winner") {
       it("displays final board and notifies winner") {
-        listOf(BoardStates.X_WINNING_ROW, BoardStates.O_WINNING_COL)
+        listOf(BoardStates.MARK_ONE_WINNING_ROW, BoardStates.MARK_TWO_WINNING_COL)
             .forEach { board ->
               val (ui, mockIO) = Helper.buildUI()
               mockIO.toRead.add("a")

@@ -54,7 +54,7 @@ object GameSpec : Spek({
 
     context("player wins") {
       with(BoardStates) {
-        listOf(X_WINNING_ROW, X_WINNING_COL, O_WINNING_ROW, O_WINNING_COL).forEach { board ->
+        listOf(MARK_ONE_WINNING_ROW, MARK_ONE_WINNING_COL, MARK_TWO_WINNING_ROW, MARK_TWO_WINNING_COL).forEach { board ->
           val (ui, onGameUpdate, onGameOver) = buildMocks(board)
           val game = GameFactory.from(ui, board)
 
