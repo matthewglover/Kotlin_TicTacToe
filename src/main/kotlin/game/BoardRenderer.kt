@@ -1,8 +1,8 @@
-package ui
+package game
 
-import game.FreeTile
-import game.Board
-import game.Move
+import core.FreeTile
+import core.Board
+import core.Move
 import util.intersperse
 
 private const val ROW_DIVIDER = "-----------"

@@ -1,4 +1,4 @@
-package ui
+package game
 
 object ConsoleIO : IO {
   private const val CLEAR_SCREEN = "\u001b[H\u001b[2J"

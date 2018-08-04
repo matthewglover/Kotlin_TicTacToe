@@ -1,4 +1,4 @@
-package game
+package core
 
 import arrow.core.Either
 import com.winterbe.expekt.expect

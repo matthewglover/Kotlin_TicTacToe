@@ -1,7 +1,9 @@
-package game
+package core
 
-import ui.ConsoleIO
-import ui.UI
+import game.ConsoleIO
+import game.Game
+import game.GameFactory
+import game.UI
 
 object Runner {
   fun run(game: Game) {

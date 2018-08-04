@@ -1,5 +1,7 @@
 package game
 
+import core.Board
+
 data class Game(
     private val p1: Player,
     private val p2: Player,

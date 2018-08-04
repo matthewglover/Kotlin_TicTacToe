@@ -1,6 +1,7 @@
 package game
 
-import ui.UI
+import core.Board
+import core.Mark
 
 data class Player(private val ui: UI, private val mark: Mark) {
 

@@ -1,4 +1,4 @@
-package game
+package core
 
 typealias Line = List<TileNumber>
 typealias TileNumber = Int

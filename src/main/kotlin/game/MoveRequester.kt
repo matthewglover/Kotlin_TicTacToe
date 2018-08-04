@@ -1,9 +1,9 @@
-package ui
+package game
 
 import arrow.core.identity
-import game.Board
-import game.InvalidData
-import game.Mark
+import core.Board
+import core.InvalidData
+import core.Mark
 
 class MoveRequester(
   private val io: IO,

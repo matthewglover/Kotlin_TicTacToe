@@ -1,7 +1,7 @@
-package ui
+package game
 
-import game.Board
-import game.Mark
+import core.Board
+import core.Mark
 
 class UI(private val io: IO) {
 

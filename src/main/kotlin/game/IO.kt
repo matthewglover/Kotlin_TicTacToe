@@ -1,4 +1,4 @@
-package ui
+package game
 
 interface IO {
   fun clearScreen()

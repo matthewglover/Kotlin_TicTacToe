@@ -1,7 +1,7 @@
-package ui
+package game
 
 import com.winterbe.expekt.expect
-import game.*
+import core.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

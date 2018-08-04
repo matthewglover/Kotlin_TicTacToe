@@ -1,4 +1,4 @@
-package game
+package core
 
 enum class Mark {
   ONE,

@@ -1,4 +1,4 @@
-package ui
+package game
 
 class MockIO : IO {
   val toRead: MutableList<String> = mutableListOf()

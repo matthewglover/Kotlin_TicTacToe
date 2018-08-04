@@ -1,6 +1,6 @@
-package ui
+package game
 
-import game.Board
+import core.Board
 
 class ResultNotifier(private val io: IO, private val board: Board) {
 

@@ -1,4 +1,4 @@
-package game
+package core
 
 sealed class Tile
 data class Move(val tileNumber: Int, val mark: Mark) : Tile()

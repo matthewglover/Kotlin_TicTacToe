@@ -1,11 +1,14 @@
 package game
 
+import core.Board
+import core.BoardStates
+import core.Mark
+import core.Move
 import io.mockk.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import ui.UI
 
 object PlayerSpec : Spek({
   describe("requestMove") {

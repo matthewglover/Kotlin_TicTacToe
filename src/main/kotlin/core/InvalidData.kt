@@ -1,4 +1,4 @@
-package game
+package core
 
 interface InvalidData {
   val message: String

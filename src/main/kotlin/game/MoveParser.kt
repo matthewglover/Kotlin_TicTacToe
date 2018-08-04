@@ -1,8 +1,8 @@
-package ui
+package game
 
 import arrow.core.Either
 import arrow.core.flatMap
-import game.*
+import core.*
 
 class MoveParser(private val board: Board, private val mark: Mark) {
   fun parse(input: String?): Either<InvalidData, Board> =

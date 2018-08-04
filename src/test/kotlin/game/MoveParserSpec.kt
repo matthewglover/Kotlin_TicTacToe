@@ -1,8 +1,8 @@
-package ui
+package game
 
 import arrow.core.Either
 import com.winterbe.expekt.expect
-import game.*
+import core.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe

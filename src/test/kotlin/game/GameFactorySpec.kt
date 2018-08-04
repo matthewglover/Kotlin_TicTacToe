@@ -1,11 +1,11 @@
 package game
 
 import com.winterbe.expekt.expect
+import core.Board
+import core.Mark
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import ui.MockIO
-import ui.UI
 
 object GameFactorySpec : Spek({
   describe("from") {
