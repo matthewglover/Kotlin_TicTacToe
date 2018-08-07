@@ -4,6 +4,7 @@ import core.Board
 import core.BoardStates
 import core.Mark
 import core.Move
+import gameOptions.PlayerType
 import io.mockk.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
@@ -12,13 +13,15 @@ import org.jetbrains.spek.api.dsl.it
 
 object GameSpec : Spek({
   describe("next") {
+    val playerTypes = Pair(PlayerType.HUMAN, PlayerType.HUMAN)
+
     context("player 1's move") {
       it("calls onGameUpdate callback with Game updated with p1's next move") {
         val board = BoardStates.EMPTY
         val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
         val (ui, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
-        val game = GameFactory.from(ui, board)
-        val nextGame = GameFactory.from(ui, nextBoard)
+        val game = GameFactory.from(ui, playerTypes, board)
+        val nextGame = GameFactory.from(ui, playerTypes, nextBoard)
 
         game.next(onGameUpdate, onGameOver)
 
@@ -32,8 +35,8 @@ object GameSpec : Spek({
         val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
         val nextBoard = BoardStates.runMoves(board, Move(2, Mark.TWO))
         val (ui, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
-        val game = GameFactory.from(ui, board)
-        val nextGame = GameFactory.from(ui, nextBoard)
+        val game = GameFactory.from(ui, playerTypes, board)
+        val nextGame = GameFactory.from(ui, playerTypes, nextBoard)
 
         game.next(onGameUpdate, onGameOver)
 
@@ -46,7 +49,7 @@ object GameSpec : Spek({
       it("calls onGameOver callback with current Game") {
         val board = BoardStates.COMPLETE
         val (ui, onGameUpdate, onGameOver) = buildMocks(board)
-        val game = GameFactory.from(ui, board)
+        val game = GameFactory.from(ui, playerTypes, board)
 
         game.next(onGameUpdate, onGameOver)
 
@@ -59,7 +62,7 @@ object GameSpec : Spek({
       with(BoardStates) {
         listOf(MARK_ONE_WINNING_ROW, MARK_ONE_WINNING_COL, MARK_TWO_WINNING_ROW, MARK_TWO_WINNING_COL).forEach { board ->
           val (ui, onGameUpdate, onGameOver) = buildMocks(board)
-          val game = GameFactory.from(ui, board)
+          val game = GameFactory.from(ui, playerTypes, board)
 
           it("calls onGameOver callback with current Game") {
             game.next(onGameUpdate, onGameOver)
@@ -81,8 +84,9 @@ fun buildMocks(currentBoard: Board, nextBoard: Board? = null): Triple<UI, (Game)
   every { onGameUpdate(any()) } just Runs
   every { onGameOver() } just Runs
   every { mockUI.notifyResult(any()) } just Runs
+
   if (nextBoard != null) {
-    every { mockUI.requestMove(currentBoard, any()) } returns nextBoard
+    every { mockUI.requestMove(currentBoard) } returns nextBoard
   }
 
   return Triple(mockUI, onGameUpdate, onGameOver)

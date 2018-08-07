@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val MAIN_CLASS_NAME = "game.RunnerKt"
+val MAIN_CLASS_NAME = "TicTacToeKt"
 
 plugins {
   val kotlinVersion = "1.2.51"

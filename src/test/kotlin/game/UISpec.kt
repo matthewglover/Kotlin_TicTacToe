@@ -2,16 +2,35 @@ package game
 
 import com.winterbe.expekt.expect
 import core.*
+import io.mockk.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.context
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
 object UISpec : Spek({
+  describe("#reportMoveRequired") {
+    val board = BoardStates.EMPTY
+    val io = mockk<IO>()
+    val ui = UI(io)
+
+    it("does a thing") {
+      every { io.clearScreen() } just Runs
+      every { io.write(any()) } just Runs
+
+      ui.reportMoveRequired(board)
+
+      verify {
+        io.write(BoardRenderer(board).rendered + "\n" +
+            "${Mark.ONE}'s turn!")
+      }
+    }
+  }
+
   describe("#requestMove") {
     context("when valid input") {
       val board = BoardStates.EMPTY
-      val (mockIO, actual) = Helper.requestMoveWith(board, Mark.ONE, "1")
+      val (mockIO, actual) = Helper.requestMoveWith(board, "1")
       val expected = BoardStates.runMoves(board, Move(1, Mark.ONE))
 
       it("clears screen") {
@@ -37,7 +56,7 @@ object UISpec : Spek({
       val nextBoard = BoardStates.runMoves(board, Move(2, Mark.ONE))
       val invalidInput = "blah"
       val validInput = "2"
-      val (mockIO, actualBoard) = Helper.requestMoveWith(board, Mark.ONE, invalidInput, validInput)
+      val (mockIO, actualBoard) = Helper.requestMoveWith(board, invalidInput, validInput)
 
       it("parses valid input") {
         expect(actualBoard).to.equal(nextBoard)
@@ -75,7 +94,7 @@ object UISpec : Spek({
       val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
       val invalidInput = "1"
       val validInput = "2"
-      val (mockIO, actual) = Helper.requestMoveWith(board, Mark.TWO, invalidInput, validInput)
+      val (mockIO, actual) = Helper.requestMoveWith(board, invalidInput, validInput)
       val expected = BoardStates.runMoves(board, Move(2, Mark.TWO))
 
       it("parses valid input and returns updated board") {
@@ -173,13 +192,13 @@ object Helper {
     Pair(UI(this), this)
   }
 
-  fun requestMoveWith(board: Board, mark: Mark, vararg inputs: String): Pair<MockIO, Board> {
+  fun requestMoveWith(board: Board, vararg inputs: String): Pair<MockIO, Board> {
     val (ui, mockIO) = Helper.buildUI()
     inputs.forEach { input ->
       mockIO.toRead.add(input)
     }
 
-    val actual = ui.requestMove(board, mark)
+    val actual = ui.requestMove(board)
 
     return Pair(mockIO, actual)
   }

@@ -1,13 +1,12 @@
 package game
 
 import core.Board
-import core.Mark
 
 class UI(private val io: IO) {
 
-  fun notifyResult(board: Board) =
-      ResultNotifier(io, board).run()
+  fun notifyResult(board: Board) = ResultNotifier(io, board).run()
 
-  fun requestMove(board: Board, mark: Mark) =
-      MoveRequester(io, board, mark).run()
+  fun requestMove(board: Board) = MoveRequester(io, board).run()
+
+  fun reportMoveRequired(board: Board) { MoveReporter(io, board).run() }
 }

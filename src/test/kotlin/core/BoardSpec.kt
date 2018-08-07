@@ -27,6 +27,7 @@ object BoardSpec : Spek({
 
     it("has all empty tiles") {
       (1..9).forEach { expect(board.tile(it)).to.equal(FreeTile(it)) }
+      expect(board.freeTileNumbers).to.equal((1..9).toList())
     }
 
     it("has no last mark") {
@@ -73,6 +74,11 @@ object BoardSpec : Spek({
     it("does not have a winner") {
       expect(board.isWinner).to.be.`false`
       expect(board.winner).to.be.`null`
+    }
+
+    it("has no empty tiles") {
+      (1..9).forEach { expect(board.tile(it)).not.to.equal(FreeTile(it)) }
+      expect(board.freeTileNumbers).to.equal(emptyList())
     }
 
     it("does not have a current mark") {

@@ -4,13 +4,15 @@ import arrow.core.Either
 
 data class Board(private val moves: List<Move> = listOf()) {
 
+  val currentMark by lazy { if (equalMoves) Mark.ONE else Mark.TWO }
+
+  val freeTileNumbers by lazy { (1..totalSquares).filter { tile(it) is FreeTile } }
+
   val isComplete by lazy { isFull || isWinner }
 
   val isWinner by lazy { status.isWinner }
 
   val winner by lazy { status.winner }
-
-  private val currentMark by lazy { if (equalMoves) Mark.ONE else Mark.TWO }
 
   private val equalMoves by lazy { movesBy(Mark.ONE) == movesBy(Mark.TWO) }
 

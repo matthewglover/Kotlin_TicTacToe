@@ -14,7 +14,7 @@ object MoveParserSpec : Spek({
       it("returns Right of board with move made") {
         val board = BoardStates.EMPTY
         val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
-        val parser = MoveParser(board, Mark.ONE)
+        val parser = MoveParser(board)
 
         expect(parser.parse("1")).to.equal(Either.Right(nextBoard))
       }
@@ -22,7 +22,7 @@ object MoveParserSpec : Spek({
 
     context("with non-integer input") {
       it("returns Left of non-integer invalid input") {
-        val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
+        val parser = MoveParser(BoardStates.EMPTY)
 
         expect(parser.parse("blah")).to.equal(Either.Left(NonInteger))
       }
@@ -30,7 +30,7 @@ object MoveParserSpec : Spek({
 
     context("with null input") {
       it("returns Left of non-integer invalid input") {
-        val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
+        val parser = MoveParser(BoardStates.EMPTY)
 
         expect(parser.parse(null)).to.equal(Either.Left(NonInteger))
       }
@@ -39,7 +39,7 @@ object MoveParserSpec : Spek({
     context("with taken square") {
       it("returns Left of move-taken invalid input") {
         val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
-        val parser = MoveParser(board, Mark.TWO)
+        val parser = MoveParser(board)
 
         expect(parser.parse("1")).to.equal(Either.Left(MoveTaken))
       }
@@ -47,7 +47,7 @@ object MoveParserSpec : Spek({
 
     context("with out of bounds move") {
       it("returns Left of out-of-bounds invalid input") {
-        val parser = MoveParser(BoardStates.EMPTY, Mark.ONE)
+        val parser = MoveParser(BoardStates.EMPTY)
 
         expect(parser.parse("10")).to.equal(Either.Left(MoveOutOfBounds))
       }
