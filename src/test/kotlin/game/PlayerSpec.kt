@@ -50,16 +50,18 @@ object PlayerSpec : Spek({
     describe("#requestMove") {
       context("when it is player's move") {
         it("takes first free square") {
-          val (ui, player, mark) = createComputerPlayer(Mark.TWO)
+          val (ui, player, mark, delayMove) = createComputerPlayer(Mark.TWO)
           val onUpdateBoard = mockk<(Board) -> Unit>(relaxed = true)
           val initialBoard = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
           val nextBoard = BoardStates.runMoves(initialBoard, Move(2, mark))
 
           every { ui.reportMoveRequired(any()) } just Runs
+          every { delayMove.run() } just Runs
 
           player.requestMove(initialBoard, onUpdateBoard)
 
           verify { onUpdateBoard(nextBoard) }
+          verify { delayMove.run() }
         }
       }
 
@@ -144,9 +146,13 @@ fun createHumanPlayer(mark: Mark) = createPlayer(mark, PlayerType.HUMAN)
 
 fun createComputerPlayer(mark: Mark) = createPlayer(mark, PlayerType.COMPUTER)
 
-fun createPlayer(mark: Mark, playerType: PlayerType): Triple<UI, Player, Mark> {
+fun createPlayer(mark: Mark, playerType: PlayerType): Quad<UI, Player, Mark, DelayMove> {
   val ui = mockk<UI>()
-  val player = PlayerFactory.from(ui, playerType, mark)
+  val delayMove = mockk<DelayMove>()
+  val player = PlayerFactory.from(ui, playerType, mark, delayMove)
 
-  return Triple(ui, player, mark)
+  return Quad(ui, player, mark, delayMove)
 }
+
+data class Quad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
+

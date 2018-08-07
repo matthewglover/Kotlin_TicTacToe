@@ -36,10 +36,11 @@ data class HumanPlayer(val ui: UI, val mark: Mark) : Player(ui, mark) {
   }
 }
 
-data class ComputerPlayer(val ui: UI, val mark: Mark) : Player(ui, mark) {
+data class ComputerPlayer(private val ui: UI, private val mark: Mark, private val delayMove: DelayMove) : Player(ui, mark) {
 
   override fun requestMoveWhenApplicable(board: Board, onUpdateBoard: (Board) -> Unit) {
     ui.reportMoveRequired(board)
+    delayMove.run()
     onUpdateBoard(nextBoard(board))
   }
 
