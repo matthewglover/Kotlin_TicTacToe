@@ -29,17 +29,19 @@ data class Board(private val moves: List<Move> = listOf()) {
   fun isCurrentMark(mark: Mark?) =
       if (isComplete) false else currentMark == mark
 
-  fun make(move: Move) =
+  fun takeTile(tileNumber: Int) = makeMove(Move(tileNumber, currentMark))
+
+  fun tile(tileNumber: Int): Tile = moves.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
+
+  fun wasLastMark(mark: Mark) = lastMark == mark
+
+  private fun makeMove(move: Move) =
       when {
         isMoveOutOfTurn(move) -> Either.Left(MoveOutOfTurn)
         isTileTaken(move) -> Either.Left(MoveTaken)
         isTileOutOfBounds(move) -> Either.Left(MoveOutOfBounds)
         else -> Either.Right(Board(moves + listOf(move)))
       }
-
-  fun tile(tileNumber: Int): Tile = moves.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
-
-  fun wasLastMark(mark: Mark) = lastMark == mark
 
   private fun isMoveOutOfTurn(move: Move) = !isCurrentMark(move.mark)
 

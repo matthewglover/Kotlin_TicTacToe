@@ -31,7 +31,7 @@ object UISpec : Spek({
     context("when valid input") {
       val board = BoardStates.EMPTY
       val (mockIO, actual) = Helper.requestMoveWith(board, "1")
-      val expected = BoardStates.runMoves(board, Move(1, Mark.ONE))
+      val expected = BoardStates.takeTiles(board, 1)
 
       it("clears screen") {
         expect(mockIO.callsTo("clearScreen")).to.equal(1)
@@ -53,7 +53,7 @@ object UISpec : Spek({
 
     context("with non-integer input") {
       val board = Board()
-      val nextBoard = BoardStates.runMoves(board, Move(2, Mark.ONE))
+      val nextBoard = BoardStates.takeTiles(board, 2)
       val invalidInput = "blah"
       val validInput = "2"
       val (mockIO, actualBoard) = Helper.requestMoveWith(board, invalidInput, validInput)
@@ -91,11 +91,11 @@ object UISpec : Spek({
     }
 
     context("with move taken input") {
-      val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
+      val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
       val invalidInput = "1"
       val validInput = "2"
       val (mockIO, actual) = Helper.requestMoveWith(board, invalidInput, validInput)
-      val expected = BoardStates.runMoves(board, Move(2, Mark.TWO))
+      val expected = BoardStates.takeTiles(board, 2)
 
       it("parses valid input and returns updated board") {
         expect(actual).to.equal(expected)

@@ -3,7 +3,6 @@ package game
 import arrow.core.getOrElse
 import core.Board
 import core.Mark
-import core.Move
 
 abstract class Player(private val ui: UI, private val mark: Mark) {
 
@@ -44,7 +43,7 @@ data class ComputerPlayer(private val ui: UI, private val mark: Mark, private va
     onUpdateBoard(nextBoard(board))
   }
 
-  private fun nextBoard(board: Board) = board.make(selectMove(board)).getOrElse { board }
+  private fun nextBoard(board: Board) = board.takeTile(selectTileNumber(board)).getOrElse { board }
 
-  private fun selectMove(board: Board) = Move(board.freeTileNumbers.first(), mark)
+  private fun selectTileNumber(board: Board) = board.freeTileNumbers.first()
 }

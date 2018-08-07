@@ -16,34 +16,14 @@ object BoardStates {
   //   O | O | X
   //  -----------
   //   X | X | O
-  val COMPLETE =
-      runMoves(
-          EMPTY,
-          Move(1, Mark.ONE),
-          Move(2, Mark.TWO),
-          Move(3, Mark.ONE),
-          Move(4, Mark.TWO),
-          Move(8, Mark.ONE),
-          Move(5, Mark.TWO),
-          Move(7, Mark.ONE),
-          Move(9, Mark.TWO),
-          Move(6, Mark.ONE)
-      )
+  val COMPLETE = takeTiles(EMPTY, 1, 2, 3, 4, 8, 5, 7, 9, 6)
 
   //   X | X | X
   //  -----------
   //   O | 5 | X
   //  -----------
   //   7 | 8 | 9
-  val MARK_ONE_WINNING_ROW =
-      runMoves(
-          EMPTY,
-          Move(1, Mark.ONE),
-          Move(4, Mark.TWO),
-          Move(2, Mark.ONE),
-          Move(6, Mark.TWO),
-          Move(3, Mark.ONE)
-      )
+  val MARK_ONE_WINNING_ROW = takeTiles(EMPTY, 1, 4, 2, 6, 3)
 
   //   X | X | 3
   //  -----------
@@ -51,53 +31,28 @@ object BoardStates {
   //  -----------
   //   X | 8 | 9
   val MARK_TWO_WINNING_ROW =
-      runMoves(
-          EMPTY,
-          Move(1, Mark.ONE),
-          Move(4, Mark.TWO),
-          Move(2, Mark.ONE),
-          Move(5, Mark.TWO),
-          Move(7, Mark.ONE),
-          Move(6, Mark.TWO)
-      )
+      takeTiles(EMPTY, 1, 4, 2, 5, 7, 6)
 
   //   O | 2 | X
   //  -----------
   //   O | 5 | X
   //  -----------
   //   7 | 8 | X
-  val MARK_ONE_WINNING_COL =
-      runMoves(
-          EMPTY,
-          Move(3, Mark.ONE),
-          Move(1, Mark.TWO),
-          Move(6, Mark.ONE),
-          Move(4, Mark.TWO),
-          Move(9, Mark.ONE)
-      )
+  val MARK_ONE_WINNING_COL = takeTiles(EMPTY, 3, 1, 6, 4, 9)
 
   //   O | 2 | 3
   //  -----------
   //   O | X | X
   //  -----------
   //   O | 8 | X
-  val MARK_TWO_WINNING_COL =
-      runMoves(
-          EMPTY,
-          Move(5, Mark.ONE),
-          Move(1, Mark.TWO),
-          Move(6, Mark.ONE),
-          Move(4, Mark.TWO),
-          Move(9, Mark.ONE),
-          Move(7, Mark.TWO)
-      )
+  val MARK_TWO_WINNING_COL = takeTiles(EMPTY, 5, 1, 6, 4, 9, 7)
 
-  fun runMoves(board: Board, vararg moves: Move): Board =
-      if (moves.isEmpty())
+  fun takeTiles(board: Board, vararg tileNumbers: Int): Board =
+      if (tileNumbers.isEmpty())
         board
       else
         board
-            .make(moves.first())
-            .map { nextBoard -> runMoves(nextBoard, *moves.drop(1).toTypedArray()) }
+            .takeTile(tileNumbers.first())
+            .map { nextBoard -> takeTiles(nextBoard, *tileNumbers.drop(1).toIntArray()) }
             .getOrElse { board }
 }

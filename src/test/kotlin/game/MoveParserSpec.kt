@@ -13,7 +13,7 @@ object MoveParserSpec : Spek({
     context("with free square") {
       it("returns Right of board with move made") {
         val board = BoardStates.EMPTY
-        val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
+        val nextBoard = BoardStates.takeTiles(board, 1)
         val parser = MoveParser(board)
 
         expect(parser.parse("1")).to.equal(Either.Right(nextBoard))
@@ -38,7 +38,7 @@ object MoveParserSpec : Spek({
 
     context("with taken square") {
       it("returns Left of move-taken invalid input") {
-        val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
+        val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
         val parser = MoveParser(board)
 
         expect(parser.parse("1")).to.equal(Either.Left(MoveTaken))

@@ -18,7 +18,7 @@ object GameSpec : Spek({
     context("player 1's move") {
       it("calls onGameUpdate callback with Game updated with p1's next move") {
         val board = BoardStates.EMPTY
-        val nextBoard = BoardStates.runMoves(board, Move(1, Mark.ONE))
+        val nextBoard = BoardStates.takeTiles(board, 1)
         val (ui, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
         val game = GameFactory.from(ui, playerTypes, board)
         val nextGame = GameFactory.from(ui, playerTypes, nextBoard)
@@ -32,8 +32,8 @@ object GameSpec : Spek({
 
     context("player 2's move") {
       it("calls onGameUpdate callback with Game updated with p2's next move") {
-        val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
-        val nextBoard = BoardStates.runMoves(board, Move(2, Mark.TWO))
+        val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
+        val nextBoard = BoardStates.takeTiles(board, 2)
         val (ui, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
         val game = GameFactory.from(ui, playerTypes, board)
         val nextGame = GameFactory.from(ui, playerTypes, nextBoard)

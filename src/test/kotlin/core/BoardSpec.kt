@@ -37,7 +37,7 @@ object BoardSpec : Spek({
   }
 
   describe("Board after first move") {
-    val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
+    val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
 
     it("is not complete") {
       expect(board.isComplete).to.be.`false`
@@ -141,33 +141,26 @@ object BoardSpec : Spek({
   }
 
   describe("Moving") {
-    val board = BoardStates.runMoves(BoardStates.EMPTY, Move(1, Mark.ONE))
-
-    context("when move is out of turn") {
-      it("returns a Left of MoveOutOfTurn") {
-        val result = board.make(Move(2, Mark.ONE))
-        expect(result).to.equal(Either.Left(MoveOutOfTurn))
-      }
-    }
+    val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
 
     context("when move is taken") {
       it("returns a Left of MoveTaken") {
-        val result = board.make(Move(1, Mark.TWO))
+        val result = board.takeTile(1)
         expect(result).to.equal(Either.Left(MoveTaken))
       }
     }
 
     context("when move is not on the board") {
       it("returns a Left of MoveOutOfBounds") {
-        val result = board.make(Move(10, Mark.TWO))
+        val result = board.takeTile(10)
         expect(result).to.equal(Either.Left(MoveOutOfBounds))
       }
     }
 
     context("when move is valid") {
       it("returns a Right of updated Board") {
-        val result = board.make(Move(2, Mark.TWO))
-        val updatedBoard = BoardStates.runMoves(board, Move(2, Mark.TWO))
+        val result = board.takeTile(2)
+        val updatedBoard = BoardStates.takeTiles(board, 2)
 
         expect(result).to.equal(Either.Right(updatedBoard))
       }
