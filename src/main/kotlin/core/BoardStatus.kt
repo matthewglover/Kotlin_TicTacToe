@@ -3,7 +3,7 @@ package core
 typealias Line = List<TileNumber>
 typealias TileNumber = Int
 
-class BoardStatus(private val moves: List<Move> = listOf()) {
+class BoardStatus(private val moves: List<TakenTile> = listOf()) {
 
   val isWinner by lazy { winner != null }
 

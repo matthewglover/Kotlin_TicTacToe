@@ -54,7 +54,7 @@ object BoardSpec : Spek({
     }
 
     it("has tile marked for Mark.ONE") {
-      expect(board.tile(1)).to.equal(Move(1, Mark.ONE))
+      expect(board.tile(1)).to.equal(TakenTile(1, Mark.ONE))
     }
 
     it("has last mark of Mark.ONE") {

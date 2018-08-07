@@ -2,8 +2,6 @@ package game
 
 import core.Board
 import core.BoardStates
-import core.Mark
-import core.Move
 import gameOptions.PlayerType
 import io.mockk.*
 import org.jetbrains.spek.api.Spek

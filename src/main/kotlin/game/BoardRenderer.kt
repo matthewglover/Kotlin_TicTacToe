@@ -2,7 +2,7 @@ package game
 
 import core.FreeTile
 import core.Board
-import core.Move
+import core.TakenTile
 import util.intersperse
 
 private const val ROW_DIVIDER = "-----------"
@@ -26,7 +26,7 @@ class BoardRenderer(private val board: Board) {
   private fun renderTile(tileNumber: Int) = with(board.tile(tileNumber)) {
     when (this) {
       is FreeTile -> this.number.toString()
-      is Move -> this.mark.toString()
+      is TakenTile -> this.mark.toString()
     }
   }
 }
