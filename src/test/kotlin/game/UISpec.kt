@@ -14,10 +14,10 @@ object UISpec : Spek({
     val io = mockk<IO>()
     val ui = UI(io)
 
-    it("does a thing") {
-      every { io.clearScreen() } just Runs
-      every { io.write(any()) } just Runs
+    every { io.clearScreen() } just Runs
+    every { io.write(any()) } just Runs
 
+    it("renders current board and requests move from next player") {
       ui.reportMoveRequired(board)
 
       verify {
@@ -30,102 +30,93 @@ object UISpec : Spek({
   describe("#requestMove") {
     context("when valid input") {
       val board = BoardStates.EMPTY
-      val (mockIO, actual) = Helper.requestMoveWith(board, "1")
-      val expected = BoardStates.takeTiles(board, 1)
+      val nextBoard = BoardStates.takeTiles(board, 1)
+      val io = mockk<IO>()
+      val ui = UI(io)
 
-      it("clears screen") {
-        expect(mockIO.callsTo("clearScreen")).to.equal(1)
-      }
+      every { io.clearScreen() } just Runs
+      every { io.write(any()) } just Runs
+      every { io.readLine() } returns "1"
 
-      it("writes move request message to output") {
-        expect(mockIO.callsTo("write")).to.equal(1)
-        expect(mockIO.written.first()).to.equal(
+      it("reports move required and reads input from io") {
+        expect(ui.requestMove(board)).to.equal(nextBoard)
+
+        verifySequence {
+          io.clearScreen()
+          io.write(
             BoardRenderer(board).rendered + "\n" +
                 "${Mark.ONE}'s turn! Choose your move: "
-        )
-      }
-
-      it("reads input and parses it to an integer") {
-        expect(mockIO.callsTo("readLine")).to.equal(1)
-        expect(actual).to.equal(expected)
+          )
+          io.readLine()
+        }
       }
     }
 
     context("with non-integer input") {
-      val board = Board()
+      val board = BoardStates.EMPTY
       val nextBoard = BoardStates.takeTiles(board, 2)
       val invalidInput = "blah"
       val validInput = "2"
-      val (mockIO, actualBoard) = Helper.requestMoveWith(board, invalidInput, validInput)
 
-      it("parses valid input") {
-        expect(actualBoard).to.equal(nextBoard)
-      }
+      val io = mockk<IO>()
+      val ui = UI(io)
 
-      it("reads two lines of input (once for each move request)") {
-        expect(mockIO.callsTo("readLine")).to.equal(2)
-      }
+      every { io.clearScreen() } just Runs
+      every { io.write(any()) } just Runs
+      every { io.readLine() } returnsMany listOf(invalidInput, validInput)
 
-      it("clears screen twice (once for each move request)") {
-        expect(mockIO.callsTo("clearScreen")).to.equal(2)
-      }
+      it("requests input until valid") {
+        expect(ui.requestMove(board)).to.equal(nextBoard)
 
-      it("writes two messages to output (one for each move request)") {
-        expect(mockIO.callsTo("write")).to.equal(2)
-      }
-
-      it("firstly, writes a request message for Mark TWO's move") {
-        expect(mockIO.written.first()).to.equal(
-            BoardRenderer(board).rendered + "\n" +
-                "${Mark.ONE}'s turn! Choose your move: "
-        )
-      }
-
-      it("secondly, warns of invalid (non-integer) input and writes another request message for Mark TWO's move") {
-        expect(mockIO.written.last()).to.equal(
+        verifySequence {
+          io.clearScreen()
+          io.write(
+              BoardRenderer(board).rendered + "\n" +
+                  "${Mark.ONE}'s turn! Choose your move: "
+          )
+          io.readLine()
+          io.clearScreen()
+          io.write(
             BoardRenderer(board).rendered + "\n" +
                 NonInteger.message + "\n" +
                 "${Mark.ONE}'s turn! Choose your move: "
-        )
+          )
+          io.readLine()
+        }
       }
     }
 
     context("with move taken input") {
       val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
+      val nextBoard = BoardStates.takeTiles(board, 2)
       val invalidInput = "1"
       val validInput = "2"
-      val (mockIO, actual) = Helper.requestMoveWith(board, invalidInput, validInput)
-      val expected = BoardStates.takeTiles(board, 2)
 
-      it("parses valid input and returns updated board") {
-        expect(actual).to.equal(expected)
-      }
+      val io = mockk<IO>()
+      val ui = UI(io)
 
-      it("reads two lines of input (one for each move request)") {
-        expect(mockIO.callsTo("readLine")).to.equal(2)
-      }
+      every { io.clearScreen() } just Runs
+      every { io.write(any()) } just Runs
+      every { io.readLine() } returnsMany listOf(invalidInput, validInput)
 
-      it("clears screen twice (once for each move request)") {
-        expect(mockIO.callsTo("clearScreen")).to.equal(2)
-      }
+      it("requests input until valid") {
+        expect(ui.requestMove(board)).to.equal(nextBoard)
 
-      it("writes two messages to output (one for each move request)") {
-        expect(mockIO.callsTo("write")).to.equal(2)
-      }
-
-      it("firstly, writes a request message for Mark TWO's move") {
-        expect(mockIO.written.first()).to.equal(
-            BoardRenderer(board).rendered + "\n" +
-                "${Mark.TWO}'s turn! Choose your move: "
-        )
-      }
-
-      it("secondly, warns of invalid input and writes another request message for Mark TWO's move") {
-        expect(mockIO.written.last()).to.equal(
-            BoardRenderer(board).rendered + "\n" +
+        verifySequence {
+          io.clearScreen()
+          io.write(
+              BoardRenderer(board).rendered + "\n" +
+                  "${Mark.TWO}'s turn! Choose your move: "
+          )
+          io.readLine()
+          io.clearScreen()
+          io.write(
+              BoardRenderer(board).rendered + "\n" +
                 MoveTaken.message + "\n" +
-                "${Mark.TWO}'s turn! Choose your move: "
-        )
+                  "${Mark.TWO}'s turn! Choose your move: "
+          )
+          io.readLine()
+        }
       }
     }
   }
@@ -204,20 +195,3 @@ object UISpec : Spek({
     }
   }
 })
-
-object Helper {
-  fun buildUI() = with(MockIO()) {
-    Pair(UI(this), this)
-  }
-
-  fun requestMoveWith(board: Board, vararg inputs: String): Pair<MockIO, Board> {
-    val (ui, mockIO) = Helper.buildUI()
-    inputs.forEach { input ->
-      mockIO.toRead.add(input)
-    }
-
-    val actual = ui.requestMove(board)
-
-    return Pair(mockIO, actual)
-  }
-}
