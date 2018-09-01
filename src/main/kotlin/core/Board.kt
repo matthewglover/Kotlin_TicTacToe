@@ -2,54 +2,47 @@ package core
 
 import arrow.core.Either
 
-data class Board(private val takenTiles: List<TakenTile> = listOf()) {
+data class Board(private val takenTiles: List<TakenTile> = listOf()) :
+    BoardStatus by BoardStatusImpl(takenTiles) {
 
   val currentMark by lazy { if (equalMoves) Mark.ONE else Mark.TWO }
 
-  val freeTileNumbers by lazy { (1..totalSquares).filter { tile(it) is FreeTile } }
+  val freeTileNumbers by lazy { allSquares.filter { tileAt(it) is FreeTile } }
 
   val isComplete by lazy { isFull || isWinner }
 
-  val isWinner by lazy { status.isWinner }
+  private val allSquares by lazy { 1..totalSquares }
 
-  val winner by lazy { status.winner }
-
-  private val equalMoves by lazy { movesBy(Mark.ONE) == movesBy(Mark.TWO) }
+  private val equalMoves by lazy { totalMovesBy(Mark.ONE) == totalMovesBy(Mark.TWO) }
 
   private val lastMark by lazy { takenTiles.lastOrNull()?.mark }
 
   private val isFull by lazy { takenTiles.size == totalSquares }
 
-  private val size = 3
+  private val isIncomplete by lazy { !isComplete }
 
-  private val status by lazy { BoardStatus(takenTiles) }
+  private val size = 3
 
   private val totalSquares by lazy { size * size }
 
-  fun isCurrentMark(mark: Mark?) =
-      if (isComplete) false else currentMark == mark
+  fun isCurrentMark(mark: Mark) = isIncomplete && currentMark == mark
 
-  fun takeTile(tileNumber: Int) = makeMove(TakenTile(tileNumber, currentMark))
+  fun takeTile(move: Int) =
+      when {
+        isTaken(move) -> Either.Left(MoveTaken)
+        isOutOfBounds(move) -> Either.Left(MoveOutOfBounds)
+        else -> Either.Right(boardWith(move))
+      }
 
-  fun tile(tileNumber: Int): Tile = takenTiles.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
+  fun tileAt(tileNumber: Int) = takenTiles.find { it.tileNumber == tileNumber } ?: FreeTile(tileNumber)
 
   fun wasLastMark(mark: Mark) = lastMark == mark
 
-  private fun makeMove(move: TakenTile) =
-      when {
-        isMoveOutOfTurn(move) -> Either.Left(MoveOutOfTurn)
-        isTileTaken(move) -> Either.Left(MoveTaken)
-        isTileOutOfBounds(move) -> Either.Left(MoveOutOfBounds)
-        else -> Either.Right(Board(takenTiles + listOf(move)))
-      }
+  private fun boardWith(move: Int) = Board(takenTiles + listOf(TakenTile(move, currentMark)))
 
-  private fun isMoveOutOfTurn(move: TakenTile) = !isCurrentMark(move.mark)
+  private fun isOutOfBounds(move: Int) = move !in allSquares
 
-  private fun isTileInBounds(move: TakenTile) = move.tileNumber in 0..totalSquares
+  private fun isTaken(move: Int) = takenTiles.any { it.tileNumber == move }
 
-  private fun isTileOutOfBounds(move: TakenTile) = !isTileInBounds(move)
-
-  private fun isTileTaken(move: TakenTile) = takenTiles.any { it.tileNumber == move.tileNumber }
-
-  private fun movesBy(mark: Mark) = takenTiles.filter { it.mark == mark }.size
+  private fun totalMovesBy(mark: Mark) = takenTiles.filter { it.mark == mark }.size
 }

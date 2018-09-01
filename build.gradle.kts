@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val MAIN_CLASS_NAME = "TicTacToeKt"
+val myMainClassName = "TicTacToeKt"
 
 plugins {
   val kotlinVersion = "1.2.51"
@@ -11,7 +11,7 @@ plugins {
 }
 
 application {
-  mainClassName = MAIN_CLASS_NAME
+  mainClassName = myMainClassName
 }
 
 repositories {
@@ -59,7 +59,7 @@ tasks.withType<KotlinCompile> {
 
 val fatJar = task("fatJar", type = Jar::class) {
   baseName = "${project.name}-fat"
-  manifest { attributes["Main-Class"] = MAIN_CLASS_NAME }
+  manifest { attributes["Main-Class"] = myMainClassName }
   from(configurations.runtime.map { if (it.isDirectory) it else zipTree(it) })
   with(tasks["jar"] as CopySpec)
 }

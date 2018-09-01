@@ -23,7 +23,7 @@ class BoardRenderer(private val board: Board) {
 
   private val renderedTiles by lazy { (1..9).map(::renderTile) }
 
-  private fun renderTile(tileNumber: Int) = with(board.tile(tileNumber)) {
+  private fun renderTile(tileNumber: Int) = with(board.tileAt(tileNumber)) {
     when (this) {
       is FreeTile -> this.number.toString()
       is TakenTile -> this.mark.toString()

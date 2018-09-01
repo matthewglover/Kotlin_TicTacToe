@@ -26,7 +26,7 @@ object BoardSpec : Spek({
     }
 
     it("has all empty tiles") {
-      (1..9).forEach { expect(board.tile(it)).to.equal(FreeTile(it)) }
+      (1..9).forEach { expect(board.tileAt(it)).to.equal(FreeTile(it)) }
       expect(board.freeTileNumbers).to.equal((1..9).toList())
     }
 
@@ -53,8 +53,8 @@ object BoardSpec : Spek({
       expect(board.isCurrentMark(Mark.ONE)).to.be.`false`
     }
 
-    it("has tile marked for Mark.ONE") {
-      expect(board.tile(1)).to.equal(TakenTile(1, Mark.ONE))
+    it("has tileAt 1 marked for Mark.ONE") {
+      expect(board.tileAt(1)).to.equal(TakenTile(1, Mark.ONE))
     }
 
     it("has last mark of Mark.ONE") {
@@ -66,7 +66,6 @@ object BoardSpec : Spek({
   describe("Drawn board") {
     val board = BoardStates.COMPLETE
 
-
     it("is complete") {
       expect(board.isComplete).to.be.`true`
     }
@@ -77,7 +76,7 @@ object BoardSpec : Spek({
     }
 
     it("has no empty tiles") {
-      (1..9).forEach { expect(board.tile(it)).not.to.equal(FreeTile(it)) }
+      (1..9).forEach { expect(board.tileAt(it)).not.to.equal(FreeTile(it)) }
       expect(board.freeTileNumbers).to.equal(emptyList())
     }
 
@@ -151,9 +150,11 @@ object BoardSpec : Spek({
     }
 
     context("when move is not on the board") {
-      it("returns a Left of MoveOutOfBounds") {
-        val result = board.takeTile(10)
-        expect(result).to.equal(Either.Left(MoveOutOfBounds))
+      listOf(0, 10).forEach { tileNumber ->
+        it("returns a Left of MoveOutOfBounds") {
+          val result = board.takeTile(tileNumber)
+          expect(result).to.equal(Either.Left(MoveOutOfBounds))
+        }
       }
     }
 

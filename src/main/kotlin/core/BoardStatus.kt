@@ -1,16 +1,13 @@
 package core
 
-typealias Line = List<TileNumber>
-typealias TileNumber = Int
+interface BoardStatus {
+  val isWinner: Boolean
+  val winner: Mark?
+}
 
-class BoardStatus(private val moves: List<TakenTile> = listOf()) {
-
-  val isWinner by lazy { winner != null }
-
-  val winner: Mark? by lazy { Mark.values().find { isWinningLine(movesBy(it)) } }
-
-  private val lines: List<Line> by lazy {
-    listOf(
+class BoardStatusImpl(private val moves: List<TakenTile> = listOf()): BoardStatus {
+  companion object {
+    val lines = listOf(
         listOf(1, 2, 3),
         listOf(4, 5, 6),
         listOf(7, 8, 9),
@@ -22,10 +19,14 @@ class BoardStatus(private val moves: List<TakenTile> = listOf()) {
     )
   }
 
-  private fun movesBy(mark: Mark) =
+  override val isWinner by lazy { winner != null }
+
+  override val winner by lazy { Mark.values().find { hasWinningLine(it) } }
+
+  private fun hasWinningLine(mark: Mark) =
+      lines.any(moveNumbersFor(mark)::containsAll)
+
+  private fun moveNumbersFor(mark: Mark) =
       moves.filter { it.mark == mark }
           .map { it.tileNumber }
-
-  private fun isWinningLine(moveNumbers: List<Int>) =
-      lines.any(moveNumbers::containsAll)
 }

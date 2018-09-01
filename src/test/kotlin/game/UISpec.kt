@@ -135,53 +135,71 @@ object UISpec : Spek({
       it("displays final board and notifies winner") {
         listOf(BoardStates.MARK_ONE_WINNING_ROW, BoardStates.MARK_TWO_WINNING_COL)
             .forEach { board ->
-              val (ui, mockIO) = Helper.buildUI()
-              mockIO.toRead.add("a")
+              val io = mockk<IO>()
+              val ui = UI(io)
+
+              every { io.clearScreen() } just Runs
+              every { io.write(any()) } just Runs
+              every { io.readLine() } returns "anything"
 
               ui.notifyResult(board)
 
-              expect(mockIO.callsTo("clearScreen")).to.equal(1)
-              expect(mockIO.callsTo("write")).to.equal(1)
-              expect(mockIO.written.first()).to.equal(
+              verifySequence {
+                io.clearScreen()
+                io.write(
                   BoardRenderer(board).rendered + "\n" +
                       "Congratulations! ${board.winner} wins!\n" +
                       "Press return to continue... "
-              )
+                )
+                io.readLine()
+              }
             }
       }
     }
 
     context("when it's a draw") {
       it("displays final board and notifies draw") {
-        val (ui, mockIO) = Helper.buildUI()
-        mockIO.toRead.add("a")
+        val io = mockk<IO>()
+        val ui = UI(io)
+
+        every { io.clearScreen() } just Runs
+        every { io.write(any()) } just Runs
+        every { io.readLine() } returns "anything"
 
         ui.notifyResult(BoardStates.COMPLETE)
 
-        expect(mockIO.callsTo("clearScreen")).to.equal(1)
-        expect(mockIO.callsTo("write")).to.equal(1)
-        expect(mockIO.written.first()).to.equal(
-            BoardRenderer(BoardStates.COMPLETE).rendered + "\n" +
-                "It's a draw!\n" +
-                "Press return to continue... "
-        )
+        verifySequence {
+          io.clearScreen()
+          io.write(
+              BoardRenderer(BoardStates.COMPLETE).rendered + "\n" +
+                  "It's a draw!\n" +
+                  "Press return to continue... "
+          )
+          io.readLine()
+        }
       }
     }
 
     context("when game is not over") {
       it("displays current board and notifies game is not over") {
-        val (ui, mockIO) = Helper.buildUI()
-        mockIO.toRead.add("a")
+        val io = mockk<IO>()
+        val ui = UI(io)
+
+        every { io.clearScreen() } just Runs
+        every { io.write(any()) } just Runs
+        every { io.readLine() } returns "anything"
 
         ui.notifyResult(BoardStates.EMPTY)
 
-        expect(mockIO.callsTo("clearScreen")).to.equal(1)
-        expect(mockIO.callsTo("write")).to.equal(1)
-        expect(mockIO.written.first()).to.equal(
-            BoardRenderer(BoardStates.EMPTY).rendered + "\n" +
-                "Game still active!\n" +
-                "Press return to continue... "
-        )
+        verifySequence {
+          io.clearScreen()
+          io.write(
+              BoardRenderer(BoardStates.EMPTY).rendered + "\n" +
+                  "Game still active!\n" +
+                  "Press return to continue... "
+          )
+          io.readLine()
+        }
       }
     }
   }
