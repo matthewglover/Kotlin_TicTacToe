@@ -1,8 +1,7 @@
 package game
 
-import core.FreeTile
 import core.Board
-import core.TakenTile
+import core.Tile
 import util.intersperse
 
 private const val ROW_DIVIDER = "-----------"
@@ -17,16 +16,16 @@ class BoardRenderer(private val board: Board) {
 
   private val renderedRows by lazy {
     renderedTiles
-        .chunked(3)
+        .chunked(board.size)
         .map { " ${it.joinToString(" | ")}" }
   }
 
-  private val renderedTiles by lazy { (1..9).map(::renderTile) }
+  private val renderedTiles by lazy { board.allSquares.map(::renderTile) }
 
   private fun renderTile(tileNumber: Int) = with(board.tileAt(tileNumber)) {
     when (this) {
-      is FreeTile -> this.number.toString()
-      is TakenTile -> this.mark.toString()
+      is Tile.Free -> number.toString()
+      is Tile.Taken -> mark.toString()
     }
   }
 }

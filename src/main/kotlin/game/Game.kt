@@ -2,6 +2,9 @@ package game
 
 import core.Board
 
+typealias GameUpdateHandler = (Game) -> Unit
+typealias GameOverHandler = () -> Unit
+
 data class Game(
     private val p1: Player,
     private val p2: Player,
@@ -10,7 +13,7 @@ data class Game(
 
   private val players = listOf(p1, p2)
 
-  fun next(onGameUpdate: (Game) -> Unit, onGameOver: () -> Unit) {
+  fun next(onGameUpdate: GameUpdateHandler, onGameOver: GameOverHandler) {
     if (board.isComplete) {
       notifyResult(onGameOver)
     } else {

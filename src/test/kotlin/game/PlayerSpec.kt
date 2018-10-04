@@ -48,19 +48,20 @@ object PlayerSpec : Spek({
   describe("ComputerPlayer") {
     describe("#requestMove") {
       context("when it is player's move") {
-        it("takes first free square") {
+        it("calls the update board callback after specified delay") {
           val (ui, player, _, delayMove) = createComputerPlayer(Mark.TWO)
           val onUpdateBoard = mockk<(Board) -> Unit>(relaxed = true)
           val initialBoard = BoardStates.takeTiles(BoardStates.EMPTY, 1)
-          val nextBoard = BoardStates.takeTiles(initialBoard, 2)
 
           every { ui.reportMoveRequired(any()) } just Runs
           every { delayMove.run() } just Runs
 
           player.requestMove(initialBoard, onUpdateBoard)
 
-          verify { onUpdateBoard(nextBoard) }
-          verify { delayMove.run() }
+          verifySequence {
+            delayMove.run()
+            onUpdateBoard(any())
+          }
         }
       }
 
@@ -148,7 +149,8 @@ fun createComputerPlayer(mark: Mark) = createPlayer(mark, PlayerType.COMPUTER)
 fun createPlayer(mark: Mark, playerType: PlayerType): Quad<UI, Player, Mark, DelayMove> {
   val ui = mockk<UI>()
   val delayMove = mockk<DelayMove>()
-  val player = PlayerFactory.from(ui, playerType, mark, delayMove)
+  val playerFactory = PlayerFactory(ui, delayMove)
+  val player = playerFactory.from(playerType, mark)
 
   return Quad(ui, player, mark, delayMove)
 }

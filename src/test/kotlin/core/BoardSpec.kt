@@ -26,7 +26,7 @@ object BoardSpec : Spek({
     }
 
     it("has all empty tiles") {
-      (1..9).forEach { expect(board.tileAt(it)).to.equal(FreeTile(it)) }
+      (1..9).forEach { expect(board.tileAt(it)).to.equal(Tile.Free(it)) }
       expect(board.freeTileNumbers).to.equal((1..9).toList())
     }
 
@@ -54,7 +54,7 @@ object BoardSpec : Spek({
     }
 
     it("has tileAt 1 marked for Mark.ONE") {
-      expect(board.tileAt(1)).to.equal(TakenTile(1, Mark.ONE))
+      expect(board.tileAt(1)).to.equal(Tile.Taken(1, Mark.ONE))
     }
 
     it("has last mark of Mark.ONE") {
@@ -76,7 +76,7 @@ object BoardSpec : Spek({
     }
 
     it("has no empty tiles") {
-      (1..9).forEach { expect(board.tileAt(it)).not.to.equal(FreeTile(it)) }
+      (1..9).forEach { expect(board.tileAt(it)).not.to.equal(Tile.Free(it)) }
       expect(board.freeTileNumbers).to.equal(emptyList())
     }
 

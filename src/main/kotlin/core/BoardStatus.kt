@@ -5,7 +5,7 @@ interface BoardStatus {
   val winner: Mark?
 }
 
-class BoardStatusImpl(private val moves: List<TakenTile> = listOf()): BoardStatus {
+class BoardStatusImpl(private val moves: List<Tile.Taken> = listOf()): BoardStatus {
   companion object {
     val lines = listOf(
         listOf(1, 2, 3),
@@ -27,6 +27,7 @@ class BoardStatusImpl(private val moves: List<TakenTile> = listOf()): BoardStatu
       lines.any(moveNumbersFor(mark)::containsAll)
 
   private fun moveNumbersFor(mark: Mark) =
-      moves.filter { it.mark == mark }
+      moves
+          .filter { it.mark == mark }
           .map { it.tileNumber }
 }

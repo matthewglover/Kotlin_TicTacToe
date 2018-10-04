@@ -1,8 +1,9 @@
 package game
 
-import arrow.core.getOrElse
 import core.Board
 import core.Mark
+
+typealias BoardUpdateHandler = (Board) -> Unit
 
 abstract class Player(private val ui: UI, private val mark: Mark) {
 
@@ -15,7 +16,7 @@ abstract class Player(private val ui: UI, private val mark: Mark) {
     }
   }
 
-  fun requestMove(board: Board, onUpdateBoard: (Board) -> Unit) {
+  fun requestMove(board: Board, onUpdateBoard: BoardUpdateHandler) {
     if (isTurn(board)) requestMoveWhenApplicable(board, onUpdateBoard)
   }
 
@@ -28,22 +29,3 @@ abstract class Player(private val ui: UI, private val mark: Mark) {
   private fun shouldNotifyResult(board: Board) = playerWon(board) || playerMadeDrawingMove(board)
 }
 
-data class HumanPlayer(val ui: UI, val mark: Mark) : Player(ui, mark) {
-
-  override fun requestMoveWhenApplicable(board: Board, onUpdateBoard: (Board) -> Unit) {
-    onUpdateBoard(ui.requestMove(board))
-  }
-}
-
-data class ComputerPlayer(private val ui: UI, private val mark: Mark, private val delayMove: DelayMove) : Player(ui, mark) {
-
-  override fun requestMoveWhenApplicable(board: Board, onUpdateBoard: (Board) -> Unit) {
-    ui.reportMoveRequired(board)
-    delayMove.run()
-    onUpdateBoard(nextBoard(board))
-  }
-
-  private fun nextBoard(board: Board) = board.takeTile(selectTileNumber(board)).getOrElse { board }
-
-  private fun selectTileNumber(board: Board) = board.freeTileNumbers.first()
-}
