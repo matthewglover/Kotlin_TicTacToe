@@ -24,7 +24,7 @@ object GameSpec : Spek({
         game.next(onGameUpdate, onGameOver)
 
         verify(exactly = 1) { onGameUpdate(nextGame) }
-        verify(exactly = 0) { onGameOver() }
+        verify(exactly = 0) { onGameOver(any()) }
       }
     }
 
@@ -39,7 +39,7 @@ object GameSpec : Spek({
         game.next(onGameUpdate, onGameOver)
 
         verify(exactly = 1) { onGameUpdate(nextGame) }
-        verify(exactly = 0) { onGameOver() }
+        verify(exactly = 0) { onGameOver(any()) }
       }
     }
 
@@ -52,7 +52,7 @@ object GameSpec : Spek({
         game.next(onGameUpdate, onGameOver)
 
         verify(exactly = 0) { onGameUpdate(any()) }
-        verify(exactly = 1) { onGameOver() }
+        verify(exactly = 1) { onGameOver(any()) }
       }
     }
 
@@ -66,7 +66,7 @@ object GameSpec : Spek({
             game.next(onGameUpdate, onGameOver)
 
             verify(exactly = 0) { onGameUpdate(any()) }
-            verify(exactly = 1) { onGameOver() }
+            verify(exactly = 1) { onGameOver(any()) }
           }
         }
       }
@@ -74,13 +74,13 @@ object GameSpec : Spek({
   }
 })
 
-fun buildMocks(currentBoard: Board, nextBoard: Board? = null): Triple<UI, (Game) -> Unit, () -> Unit> {
+fun buildMocks(currentBoard: Board, nextBoard: Board? = null): Triple<UI, (Game) -> Unit, (Game) -> Unit> {
   val mockUI = mockk<UI>()
   val onGameUpdate = mockk<(Game) -> Unit>()
-  val onGameOver = mockk<() -> Unit>()
+  val onGameOver = mockk<(Game) -> Unit>()
 
   every { onGameUpdate(any()) } just Runs
-  every { onGameOver() } just Runs
+  every { onGameOver(any()) } just Runs
   every { mockUI.notifyResult(any()) } just Runs
 
   if (nextBoard != null) {

@@ -13,7 +13,7 @@ object RunnerSpec : Spek({
     context("game complete") {
       val game = mockk<Game>()
 
-      every { game.next(any(), any()) } answers { secondArg<() -> Unit>()() }
+      every { game.next(any(), any()) } answers { secondArg<(Game) -> Unit>()(game) }
 
       it("calls onGameOver callback immediately") {
         Runner.run(game)
@@ -29,7 +29,7 @@ object RunnerSpec : Spek({
       every { game.next(any(), any()) } answers {
         callCount++
         if (callCount == 2) {
-          secondArg<() -> Unit>()()
+          secondArg<(Game) -> Unit>()(game)
         } else {
           firstArg<(Game) -> Unit>()(game)
         }

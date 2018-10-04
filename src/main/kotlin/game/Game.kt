@@ -3,17 +3,16 @@ package game
 import core.Board
 
 typealias GameUpdateHandler = (Game) -> Unit
-typealias GameOverHandler = () -> Unit
 
 data class Game(
     private val p1: Player,
     private val p2: Player,
-    private val board: Board
+    val board: Board
 ) {
 
   private val players = listOf(p1, p2)
 
-  fun next(onGameUpdate: GameUpdateHandler, onGameOver: GameOverHandler) {
+  fun next(onGameUpdate: GameUpdateHandler, onGameOver: GameUpdateHandler) {
     if (board.isComplete) {
       notifyResult(onGameOver)
     } else {
@@ -21,8 +20,8 @@ data class Game(
     }
   }
 
-  private fun notifyResult(onGameOver: () -> Unit) {
-    players.forEach { it.notifyResult(board, onGameOver) }
+  private fun notifyResult(onGameOver: (Game) -> Unit) {
+    players.forEach { it.notifyResult(this, onGameOver) }
   }
 
   private fun requestMove(onGameUpdate: (Game) -> Unit) {

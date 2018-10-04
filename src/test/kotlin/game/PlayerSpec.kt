@@ -83,60 +83,64 @@ object PlayerSpec : Spek({
     context("when Player has won") {
       it("notifies UI of result") {
         val (ui, player) = createHumanPlayer(Mark.ONE)
-        val onGameOver = mockk<() -> Unit>()
+        val onGameOver = mockk<(Game) -> Unit>()
+        val game = Game(player, player, BoardStates.MARK_ONE_WINNING_ROW)
 
         every { ui.notifyResult(any()) } just Runs
-        every { onGameOver() } just Runs
+        every { onGameOver(any()) } just Runs
 
-        player.notifyResult(BoardStates.MARK_ONE_WINNING_ROW, onGameOver)
+        player.notifyResult(game, onGameOver)
 
         verify { ui.notifyResult(BoardStates.MARK_ONE_WINNING_ROW) }
-        verify { onGameOver() }
+        verify { onGameOver(any()) }
       }
     }
 
     context("when Player has lost") {
       it("does not notify UI of result") {
         val (ui, player) = createHumanPlayer(Mark.TWO)
-        val onGameOver = mockk<() -> Unit>()
+        val onGameOver = mockk<(Game) -> Unit>()
+        val game = Game(player, player, BoardStates.MARK_ONE_WINNING_ROW)
 
         every { ui.notifyResult(any()) } just Runs
-        every { onGameOver() } just Runs
+        every { onGameOver(any()) } just Runs
 
-        player.notifyResult(BoardStates.MARK_ONE_WINNING_ROW, onGameOver)
+        player.notifyResult(game, onGameOver)
 
         verify(exactly = 0) { ui.notifyResult(BoardStates.MARK_ONE_WINNING_ROW) }
-        verify(exactly = 0) { onGameOver() }
+        verify(exactly = 0) { onGameOver(any()) }
       }
     }
 
     context("when Player has played drawing move") {
       it("notifies UI of result") {
         val (ui, player) = createHumanPlayer(Mark.ONE)
-        val onGameOver = mockk<() -> Unit>()
+        val onGameOver = mockk<(Game) -> Unit>()
+        val game = Game(player, player, BoardStates.COMPLETE)
 
         every { ui.notifyResult(any()) } just Runs
-        every { onGameOver() } just Runs
+        every { onGameOver(any()) } just Runs
 
-        player.notifyResult(BoardStates.COMPLETE, onGameOver)
+        player.notifyResult(game, onGameOver)
 
         verify(exactly = 1) { ui.notifyResult(BoardStates.COMPLETE) }
-        verify(exactly = 1) { onGameOver() }
+        verify(exactly = 1) { onGameOver(any()) }
       }
     }
 
     context("when Player has not played drawing move") {
       it("does not notify UI of result") {
         val (ui, player) = createHumanPlayer(Mark.TWO)
-        val onGameOver = mockk<() -> Unit>()
+        val onGameOver = mockk<(Game) -> Unit>()
+        val game = Game(player, player, BoardStates.COMPLETE)
 
         every { ui.notifyResult(any()) } just Runs
-        every { onGameOver() } just Runs
+        every { onGameOver(any()) } just Runs
 
-        player.notifyResult(BoardStates.COMPLETE, onGameOver)
+        player.notifyResult(game, onGameOver)
 
         verify(exactly = 0) { ui.notifyResult(BoardStates.COMPLETE) }
-        verify(exactly = 0) { onGameOver() }
+        verify(exactly = 0) { onGameOver(any()) }
       }
     }
   }

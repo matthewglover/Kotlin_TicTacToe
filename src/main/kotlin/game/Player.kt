@@ -9,10 +9,10 @@ abstract class Player(private val ui: UI, private val mark: Mark) {
 
   internal abstract fun requestMoveWhenApplicable(board: Board, onUpdateBoard: (Board) -> Unit)
 
-  fun notifyResult(board: Board, onGameOver: () -> Unit) {
-    if (shouldNotifyResult(board)) {
-      ui.notifyResult(board)
-      onGameOver()
+  fun notifyResult(game: Game, onGameOver: GameUpdateHandler) {
+    if (shouldNotifyResult(game.board)) {
+      ui.notifyResult(game.board)
+      onGameOver(game)
     }
   }
 
