@@ -2,9 +2,7 @@ package core
 
 import arrow.core.Either
 
-data class Board(private val takenTiles: List<Tile.Taken> = listOf()) :
-
-    BoardStatus by BoardStatusImpl(takenTiles) {
+data class Board(private val takenTiles: List<Tile.Taken> = listOf()) : BoardStatus by BoardStatusImpl(takenTiles) {
 
   val currentMark by lazy { if (movesAreEqual) Mark.ONE else Mark.TWO }
 

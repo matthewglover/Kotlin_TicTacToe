@@ -14,14 +14,10 @@ data class Game(
 
   fun next(onGameUpdate: GameUpdateHandler, onGameOver: GameUpdateHandler) {
     if (board.isComplete) {
-      notifyResult(onGameOver)
+      onGameOver(this)
     } else {
       requestMove(onGameUpdate)
     }
-  }
-
-  private fun notifyResult(onGameOver: (Game) -> Unit) {
-    players.forEach { it.notifyResult(this, onGameOver) }
   }
 
   private fun requestMove(onGameUpdate: (Game) -> Unit) {

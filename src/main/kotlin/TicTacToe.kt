@@ -14,15 +14,15 @@ class TicTacToe(val io: IO) {
 
   fun run() {
     val selection = playerTypeSelector.requestSelection()
-    val ui = UI(ConsoleIO)
-    val game = GameFactory.from(ui, selection)
+    val playerUI = PlayerUI(io)
+    val gameUI = GameUI(io)
+    val onGameOver = GameOverNotifier(gameUI).build()
+    val game = GameFactory.from(playerUI, selection)
 
-    Runner.run(game)
+    Runner.run(game, onGameOver)
   }
 }
 
 fun main(args: Array<String>) {
-  val ticTacToe = TicTacToe(ConsoleIO)
-
-  ticTacToe.run()
+  TicTacToe(ConsoleIO).run()
 }

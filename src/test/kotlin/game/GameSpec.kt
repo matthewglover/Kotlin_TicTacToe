@@ -17,9 +17,9 @@ object GameSpec : Spek({
       it("calls onGameUpdate callback with Game updated with p1's next move") {
         val board = BoardStates.EMPTY
         val nextBoard = BoardStates.takeTiles(board, 1)
-        val (ui, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
-        val game = GameFactory.from(ui, playerTypes, board)
-        val nextGame = GameFactory.from(ui, playerTypes, nextBoard)
+        val (playerUI, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
+        val game = GameFactory.from(playerUI, playerTypes, board)
+        val nextGame = GameFactory.from(playerUI, playerTypes, nextBoard)
 
         game.next(onGameUpdate, onGameOver)
 
@@ -32,9 +32,9 @@ object GameSpec : Spek({
       it("calls onGameUpdate callback with Game updated with p2's next move") {
         val board = BoardStates.takeTiles(BoardStates.EMPTY, 1)
         val nextBoard = BoardStates.takeTiles(board, 2)
-        val (ui, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
-        val game = GameFactory.from(ui, playerTypes, board)
-        val nextGame = GameFactory.from(ui, playerTypes, nextBoard)
+        val (playerUI, onGameUpdate, onGameOver) = buildMocks(board, nextBoard)
+        val game = GameFactory.from(playerUI, playerTypes, board)
+        val nextGame = GameFactory.from(playerUI, playerTypes, nextBoard)
 
         game.next(onGameUpdate, onGameOver)
 
@@ -46,8 +46,8 @@ object GameSpec : Spek({
     context("game is drawn") {
       it("calls onGameOver callback with current Game") {
         val board = BoardStates.COMPLETE
-        val (ui, onGameUpdate, onGameOver) = buildMocks(board)
-        val game = GameFactory.from(ui, playerTypes, board)
+        val (playerUI, onGameUpdate, onGameOver) = buildMocks(board)
+        val game = GameFactory.from(playerUI, playerTypes, board)
 
         game.next(onGameUpdate, onGameOver)
 
@@ -59,8 +59,8 @@ object GameSpec : Spek({
     context("player wins") {
       with(BoardStates) {
         listOf(MARK_ONE_WINNING_ROW, MARK_ONE_WINNING_COL, MARK_TWO_WINNING_ROW, MARK_TWO_WINNING_COL).forEach { board ->
-          val (ui, onGameUpdate, onGameOver) = buildMocks(board)
-          val game = GameFactory.from(ui, playerTypes, board)
+          val (playerUI, onGameUpdate, onGameOver) = buildMocks(board)
+          val game = GameFactory.from(playerUI, playerTypes, board)
 
           it("calls onGameOver callback with current Game") {
             game.next(onGameUpdate, onGameOver)
@@ -74,18 +74,17 @@ object GameSpec : Spek({
   }
 })
 
-fun buildMocks(currentBoard: Board, nextBoard: Board? = null): Triple<UI, (Game) -> Unit, (Game) -> Unit> {
-  val mockUI = mockk<UI>()
+fun buildMocks(currentBoard: Board, nextBoard: Board? = null): Triple<PlayerUI, (Game) -> Unit, (Game) -> Unit> {
+  val playerUI = mockk<PlayerUI>()
   val onGameUpdate = mockk<(Game) -> Unit>()
   val onGameOver = mockk<(Game) -> Unit>()
 
   every { onGameUpdate(any()) } just Runs
   every { onGameOver(any()) } just Runs
-  every { mockUI.notifyResult(any()) } just Runs
 
   if (nextBoard != null) {
-    every { mockUI.requestMove(currentBoard) } returns nextBoard
+    every { playerUI.requestMove(currentBoard) } returns nextBoard
   }
 
-  return Triple(mockUI, onGameUpdate, onGameOver)
+  return Triple(playerUI, onGameUpdate, onGameOver)
 }

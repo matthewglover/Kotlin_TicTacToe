@@ -12,7 +12,7 @@ import org.jetbrains.spek.api.dsl.it
 object GameFactorySpec : Spek({
   describe("from") {
     it("returns a game") {
-      val ui = UI(mockk())
+      val ui = PlayerUI(mockk())
       val game = GameFactory.from(ui, Pair(PlayerType.HUMAN, PlayerType.HUMAN))
 
       expect(game).to.equal(Game(HumanPlayer(ui, Mark.ONE), HumanPlayer(ui, Mark.TWO), Board()))

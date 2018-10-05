@@ -4,7 +4,7 @@ import arrow.core.getOrElse
 import core.Board
 import core.Mark
 
-data class ComputerPlayer(private val ui: UI, private val mark: Mark, private val delayMove: DelayMove) : Player(ui, mark) {
+data class ComputerPlayer(private val ui: PlayerUI, private val mark: Mark, private val delayMove: DelayMove) : Player(mark) {
 
   override fun requestMoveWhenApplicable(board: Board, onUpdateBoard: BoardUpdateHandler) {
     ui.reportMoveRequired(board)
